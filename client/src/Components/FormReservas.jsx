@@ -23,11 +23,13 @@ function FormReservas() {
   const [dateToShow, setDateToShow] = useState(fechaActual)
   const [data, setData] = useState(initialState)
   const [horas, setHoras] = useState([])
+  const [registrado, setRegistrado] = useState(false)
 
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
 
   const registroOk = () => {
+    setRegistrado(true)
     enqueueSnackbar('Registramos su reserva con éxito!', {
       anchorOrigin: {
         vertical: 'top',
@@ -37,8 +39,11 @@ function FormReservas() {
       variant: 'success',
     })
   }
-  const registroFail = () => {
-    enqueueSnackbar('Hubo un error con nuestros servidores', {
+  const registroFail = (msg) => {
+    if (msg === '') {
+      msg = 'Hubo un error con nuestros servidores'
+    }
+    enqueueSnackbar(msg, {
       anchorOrigin: {
         vertical: 'top',
         horizontal: 'left',
@@ -63,13 +68,12 @@ function FormReservas() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('data: ', data)
-    if (data.turno !== 'Elige el horario') {
+    if (data.turno !== '') {
       axios.post('/newClient', data)
         .then(() => registroOk())
         .catch(() => registroFail())
     } else {
-      alert("Debes elegir un horario")
+      registroFail("Debes elegir un horario")
     }
   }
 
@@ -81,15 +85,16 @@ function FormReservas() {
           <form className="formularioReservas" onSubmit={handleSubmit}>
             <div className="filaFormulario">
               <span>NOMBRE</span>
-              <input type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
+              <input disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
             </div>
             <div className="filaFormulario">
               <span>CELULAR</span>
-              <input type="tel" name="telefono" placeholder="Ingrese su WhatsApp" onChange={handleChange} required />
+              <input disabled={registrado} type="tel" name="telefono" placeholder="Ingrese su WhatsApp" onChange={handleChange} required />
             </div>
             <div className="filaFormulario">
               <span>ELIGE EL DÍA</span>
               {<KeyboardDatePicker
+                disabled={registrado}
                 name='dia'
                 autoOk
                 className={classes.inputFecha}
@@ -108,7 +113,7 @@ function FormReservas() {
             </div>
             <div className="filaFormulario">
               <span>ELIGE EL HORARIO</span>
-              <select className="form-input select-filter" name="turno" onChange={handleChange} required>
+              <select disabled={registrado} className="form-input select-filter" name="turno" onChange={handleChange} required>
                 <option>Elige el horario</option>
                 {
                   horas.length === 0 ?
@@ -118,7 +123,7 @@ function FormReservas() {
                 }
               </select>
             </div>
-            <button className="reservar" type="submit">Reservar</button>
+            <button disabled={registrado} className="reservar" type="submit">Reservar</button>
           </form>
         </div>
         :
