@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import axios from 'axios'
 import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
+import imgWsp from './../assets/wsp.png'
+import { Button, Modal } from 'react-bootstrap';
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -21,6 +23,12 @@ function AdminClients() {
     const [dateToShow, setDateToShow] = useState(new Date())
     const [registrados, setRegistrados] = useState([])
     const [render, setRender] = useState(false)
+    const [show, setShow] = useState(false);
+    const [selectId, setSelectId] = useState()
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     const classes = useStyle();
 
     const { enqueueSnackbar } = useSnackbar();
@@ -49,8 +57,7 @@ function AdminClients() {
         );
     }
 
-    const deleteRegister = (e, id) => {
-        e.preventDefault()
+    const deleteRegister = (id) => {
         axios.post(`/deleteClient/${id}`)
             .then((r) => {
                 registroOk(r.data.msg)
@@ -122,11 +129,17 @@ function AdminClients() {
                                     : user.ocupado === 'Cliente' ?
                                         <div className="registrado">
                                             <div>
-                                                {user.nombre} - {user.turno}hs
+                                                <b>{user.nombre}</b> - {user.turno}hs
                                             </div>
                                             <div>
-                                                <button name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono)}>Escribir</button>
-                                                <button name={user.id} onClick={(e) => deleteRegister(e, user.id)}>Eliminar</button>
+                                                <img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono)} className='imagenWsp' src={imgWsp} />
+
+                                                <button name={user.id} onClick={(e) => {
+                                                    e.preventDefault()
+                                                    setSelectId(user.id)
+                                                    handleShow()
+                                                }
+                                                }>Eliminar</button>
                                             </div>
                                         </div>
                                         :
@@ -136,7 +149,6 @@ function AdminClients() {
                                                 <button onClick={(e) => liberarHorario(e, user.turno)}>Liberar</button>
                                             </div>
                                         </div>
-
                             )}
                         </div>
                         <div className="filaFormulario">
@@ -145,6 +157,23 @@ function AdminClients() {
 
                     </form>
                 </div>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Borrar cliente</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Está seguro que quieres borrar este cliente?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            No
+                        </Button>
+                        <Button variant="danger" onClick={() => {
+                            handleClose()
+                            deleteRegister(selectId)
+                        }}>
+                            Si
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
             :
             <div>
