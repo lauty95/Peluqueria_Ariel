@@ -102,7 +102,7 @@ router.post('/ocuparHorario/:dia/:horario', async (req, res) => {
 
     const turnoSplited = horario.split(':')
     const diaSplited = dia.split('-')
-    const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1])
+    const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1]) + Math.floor(Math.random() * 1000)
 
     try {
         await Cliente.create({
