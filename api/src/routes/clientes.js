@@ -15,7 +15,8 @@ router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
     const turnoSplited = turno.split(':')
     const diaSplited = dia.split('-')
-    const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1])
+    const telSplited = telefono.toString().slice(6, 10)
+    const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1] + Number(telSplited))
     try {
         await Cliente.create({
             id: id,
@@ -117,6 +118,7 @@ router.post('/ocuparHorario/:dia/:horario', async (req, res) => {
         res.status(400).send(e);
     }
 })
+
 router.post('/liberarHorario/:dia/:horario', async (req, res) => {
     const { dia, horario } = req.params
     try {
@@ -127,6 +129,15 @@ router.post('/liberarHorario/:dia/:horario', async (req, res) => {
             }
         })
             .then(() => res.status(200).send({ msg: `El turno de las ${horario} fue liberado` }))
+    } catch (e) {
+        res.status(400).send(e)
+    }
+})
+
+router.get('/getAllClients', async (req, res) => {
+    try {
+        const clientes = await Cliente.findAll()
+        res.status(200).send(clientes)
     } catch (e) {
         res.status(400).send(e)
     }
