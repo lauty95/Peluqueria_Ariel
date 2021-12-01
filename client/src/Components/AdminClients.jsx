@@ -60,7 +60,7 @@ function AdminClients() {
     const handleSubmitWrite = (e, tel, turno, dia) => {
         e.preventDefault()
         window.open(
-            `https://wa.me/549${tel}?text=${mensaje.replace("HORA", `*${turno}hs*`)}`,
+            `https://wa.me/549${tel}?text=${mensaje.replace("HORA", `*${turno} hs*`)}`,
             '_blank'
         );
     }
