@@ -21,11 +21,13 @@ const client = new Client({
 
 router.get("/whatsapp", async (req, res) => {
     try {
-        client.initialize()
         client.on('qr', qr => {
             qrcode.generate(qr, { small: true })
             res.send(qr)
         })
+        // client.on('ready', () => {
+        //     console.log('cliente wsp listo')
+        // })
     } catch (e) {
         res.status(500).send(e)
     }
@@ -52,9 +54,7 @@ router.post("/newClient", async (req, res) => {
         res.send(e);
     }
     try {
-        client.on('ready', () => {
-            console.log('cliente wsp listo')
-        })
+        client.initialize()
         client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
             if (isRegistered) {
                 console.log(telefono)
