@@ -13,18 +13,18 @@ const horarios = [
 ]
 const client = new Client();
 
-function whatsappAutomatico() {
+router.get("whatsapp", (req, res) => {
     client.initialize()
     client.on('qr', qr => {
         qrcode.generate(qr, { small: true })
+        res.send(qr)
     })
     client.on('ready', () => {
         console.log('cliente wsp listo')
     })
+})
 
-}
 
-whatsappAutomatico()
 
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
@@ -44,11 +44,11 @@ router.post("/newClient", async (req, res) => {
     } catch (e) {
         res.send(e);
     }
-    client.isRegisteredUser(`${telefono}@c.us`).then(function(isRegistered) {
-        if(isRegistered) {
+    client.isRegisteredUser(`${telefono}@c.us`).then(function (isRegistered) {
+        if (isRegistered) {
             client.sendMessage(`${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
         }
-    })  
+    })
 })
 
 router.get("/hoursFree/:dia", async (req, res) => {
