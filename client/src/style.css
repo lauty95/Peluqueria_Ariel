@@ -119,6 +119,13 @@ select {
     height: 100px;
 }
 
+.ocupado{
+    background: rgb(103, 103, 109);
+}
+.cliente{
+    background: rgb(80, 119, 80);
+}
+
 @media (max-width: 600px) {
     .contenedorFormulario {
         margin-left: auto;
