@@ -122,9 +122,9 @@ function AdminClients() {
     const guardarMensaje = () => {
         axios.post('/setearMensaje', { mensaje })
             .then(r => registroOk(r.data.msg))
-     
-            handleCloseCanva()
+        handleCloseCanva()
     }
+
     return (
         registrados.length > 0 ?
             <div>
@@ -159,7 +159,7 @@ function AdminClients() {
                                                 </tr>
                                                 :
                                                 user.ocupado === 'Cliente' ?
-                                                    <tr>
+                                                    <tr className="cliente">
                                                         <td><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
                                                         <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
@@ -171,7 +171,7 @@ function AdminClients() {
                                                         }>Eliminar</button>}</td>
                                                     </tr>
                                                     :
-                                                    <tr>
+                                                    <tr className="ocupado">
                                                         <td>Ocupado</td>
                                                         <td>{user.turno}hs</td>
                                                         <td></td>
