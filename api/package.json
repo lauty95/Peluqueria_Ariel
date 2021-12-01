@@ -25,7 +25,8 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.6",
     "pg": "^8.5.1",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "web-push": "^3.4.5"
   },
   "devDependencies": {
     "supertest-session": "^4.1.0",

@@ -13,4 +13,8 @@ module.exports = (sequelize) => {
       timestamps: false
     }
   );
+
+  const Mensaje = sequelize.define('mensaje', {
+    mensaje: { type: DataTypes.TEXT, allowNull: true }
+  })
 };
