@@ -52,8 +52,8 @@ function AdminClients() {
         })
     }
 
-    const obtenerQr = () => {
-        axios.post('/whatsapp')
+    const obtenerQr = async () => {
+        await axios.get('/whatsapp')
             .then(r => setQr(r.data))
     }
 

@@ -4,6 +4,7 @@ const router = express();
 const { Op } = require('sequelize');
 const qrcode = require('qrcode-terminal')
 const { Client } = require('whatsapp-web.js')
+const puppeteer = require("puppeteer")
 
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
@@ -13,7 +14,13 @@ const horarios = [
 ]
 const client = new Client();
 
-router.post("/whatsapp", (req, res) => {
+router.get("/whatsapp", async (req, res) => {
+    await puppeteer.launch({
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+        ],
+    });
     try {
         client.initialize()
         client.on('qr', qr => {
