@@ -106,6 +106,19 @@ select {
     width: 280px !important;
 }
 
+.marginTop{
+    margin-top: 20px;
+}
+
+.mensajeWsp{
+    margin-bottom: 15px;
+}
+
+.mensajeWsp {
+    width: 250px;
+    height: 100px;
+}
+
 @media (max-width: 600px) {
     .contenedorFormulario {
         margin-left: auto;

@@ -26,6 +26,7 @@ function FormReservas() {
   const [horas, setHoras] = useState([])
   const [registrado, setRegistrado] = useState(false)
 
+
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -56,7 +57,18 @@ function FormReservas() {
 
   useEffect(() => {
     axios.get(`/hoursFree/${data.dia}`)
-      .then(res => setHoras(res.data))
+      .then(res => {
+        if (data.dia === initialDate) {
+          const filtroHora = res.data.filter(el => Number(el.split(":")[0]) > new Date().getHours() + 1)
+          if (filtroHora.length === 0) {
+            setHoras(['sin horario para hoy'])
+          } else {
+            setHoras(filtroHora)
+          }
+        } else {
+          setHoras(res.data)
+        }
+      })
       .catch(() => registroFail())
   }, [dateToShow])
 
@@ -82,15 +94,15 @@ function FormReservas() {
     <>
       {horas.length !== 0 ?
         <div className="contenedorFormulario">
-          <h3>Reserva un día para el corte</h3>
+          <center><h3>Haz tu reserva!</h3></center>
           <form className="formularioReservas" onSubmit={handleSubmit}>
             <div className="filaFormulario">
               <span>NOMBRE</span>
               <input disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
             </div>
             <div className="filaFormulario">
-              <span>CELULAR</span>
-              <input disabled={registrado} type="tel" name="telefono" placeholder="Ingrese su WhatsApp" onChange={handleChange} required />
+              <span>CELULAR (con característica | sin 0, sin 15)</span>
+              <input disabled={registrado} type="tel" name="telefono" placeholder="3492505050" onChange={handleChange} required />
             </div>
             <div className="filaFormulario">
               <span>ELIGE EL DÍA</span>

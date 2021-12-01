@@ -27,8 +27,7 @@ function AdminClients() {
     const [show, setShow] = useState(false);
     const [selectId, setSelectId] = useState()
     const [showCanva, setShowCanva] = useState(false);
-    const [backUp, setBackUp] = useState(false);
-    const [filtrado, setFiltrado] = useState(true);
+    const [mensaje, setMensaje] = useState(true);
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -52,27 +51,16 @@ function AdminClients() {
     }
 
     useEffect(() => {
-        axios.get(`/getAllClients/`)
-            .then(r => {
-                setBackUp(r.data)
-                setRegistrados(r.data.filter(el => transformarFecha(el.dia) >= diaActual))
-            })
-    }, [])
-
-    const mostrarTodos = () => {
-        setRegistrados(backUp)
-    }
-    const reset = () => {
-        window.location.href = "/admin"
-    }
-    const mostrarHorariosLibres = () => {
-        return
-    }
+        axios.get(`/getClients/${fechaActual}`)
+            .then(r => setRegistrados(r.data))
+        axios.get(`/mensajeWsp`)
+            .then(r => setMensaje(r.data.mensaje))
+    }, [render])
 
     const handleSubmitWrite = (e, tel) => {
         e.preventDefault()
         window.open(
-            `https://wa.me/549${tel}`,
+            `https://wa.me/549${tel}?text=${mensaje}`,
             '_blank'
         );
     }
@@ -99,7 +87,6 @@ function AdminClients() {
                 registroOk('Hubo un error')
             })
     }
-
     const transformarFecha = (input) => {
         const fecha = input.split('-')
         return new Date("" + 20 + fecha[2], fecha[1] - 1, fecha[0])
@@ -122,103 +109,79 @@ function AdminClients() {
             })
     }
 
-    const filtrarPorFecha = () => {
-        let res = backUp.filter(el => el.dia >= fechaActual)
-        if (res.length === 0) {
-            setRegistrados([{}])
-            setFiltrado(false)
-        } else {
-            setFiltrado(true)
-            setRegistrados(res)
-        }
-        handleCloseCanva()
-    }
     const filtrarPorFechaExacta = () => {
-        let res = backUp.filter(el => el.dia === fechaActual)
-        if (res.length === 0) {
-            setRegistrados([{}])
-            setFiltrado(false)
-        } else {
-            setFiltrado(true)
-            setRegistrados(res)
-        }
+        axios.get(`/getClients/${fechaActual}`)
+            .then(r => setRegistrados(r.data))
         handleCloseCanva()
     }
 
-    //ordenar por fecha
-    registrados.sort((a, b) => transformarFecha(a.dia) - transformarFecha(b.dia))
+    const setearMensajeWsp = (e) => {
+        setMensaje(e.target.value)
+        handleCloseCanva()
+    }
+
+    const guardarMensaje = () => {
+        axios.post('/setearMensaje', { mensaje })
+            .then(r => registroOk(r.data.msg))
+    }
+    
     return (
         registrados.length > 0 ?
             <div>
                 <div className="contenedorFormulario">
-                    <h3>Reservas realizadas</h3>
+                    <h3>Administración</h3>
                     <form className="formularioReservas">
                         <div className="botonesFiltrado">
                             <Button variant="primary" onClick={handleShowCanva}>
-                                Filtrar
-                            </Button>
-                            <Button variant="primary" onClick={mostrarTodos}>
-                                Todos
-                            </Button>
-                            <Button variant="primary" onClick={mostrarHorariosLibres}>
-                                Libres
-                            </Button>
-                            <Button variant="secondary" onClick={reset}>
-                                Reset
+                                Opciones
                             </Button>
                         </div>
                         {
-                            filtrado ?
-                                <div className="filaFormulario">
-                                    <Table responsive="sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Fecha/Turno</th>
-                                                <th>Escribir</th>
-                                                <th>Admin</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {registrados.map(user =>
-                                                // transformarFecha(user.dia) >= diaActual ?
-                                                !user.ocupado ?
-                                                    <div className="registrado">
-                                                        <div>
-                                                            {user}hs
-                                                        </div>
-                                                        <div>
-                                                            <button name={user} onClick={(e) => ocuparHorario(e, user)}>Ocupar</button>
-                                                        </div>
-                                                    </div>
+
+                            <div className="filaFormulario">
+                                <Table responsive="sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Fecha/Turno</th>
+                                            <th>Escribir</th>
+                                            <th>Admin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {registrados.map(user =>
+                                            !user.ocupado ?
+                                                <tr>
+                                                    <td>Libre</td>
+                                                    <td>{user}hs</td>
+                                                    <td></td>
+                                                    <td>{<button name={user} onClick={(e) => ocuparHorario(e, user)}>Ocupar</button>}</td>
+                                                </tr>
+                                                :
+                                                user.ocupado === 'Cliente' ?
+                                                    <tr>
+                                                        <td><b>{user.nombre}</b></td>
+                                                        <td>{hoy(user.dia)} {user.turno} hs</td>
+                                                        <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
+                                                        <td>{<button name={user.id} onClick={(e) => {
+                                                            e.preventDefault()
+                                                            setSelectId(user.id)
+                                                            handleShow()
+                                                        }
+                                                        }>Eliminar</button>}</td>
+                                                    </tr>
                                                     :
-                                                    user.ocupado === 'Cliente' ?
-                                                        <tr>
-                                                            <td><b>{user.nombre}</b></td>
-                                                            <td>{hoy(user.dia)} {user.turno} hs</td>
-                                                            <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
-                                                            <td>{<button name={user.id} onClick={(e) => {
-                                                                e.preventDefault()
-                                                                setSelectId(user.id)
-                                                                handleShow()
-                                                            }
-                                                            }>Eliminar</button>}</td>
-                                                        </tr>
-                                                        :
-                                                        <tr>
-                                                            <td>Ocupado</td>
-                                                            <td>{hoy(user.dia)} {user.turno} hs</td>
-                                                            <td></td>
-                                                            <td><button onClick={(e) => liberarHorario(e, user.turno)}>Liberar</button></td>
-                                                        </tr>
-                                                // :
-                                                // <></>
-                                            )}
-                                        </tbody>
-                                    </Table>
-                                </div>
-                                :
-                                <p>No se encontraron resultados</p>
+                                                    <tr>
+                                                        <td>Ocupado</td>
+                                                        <td>{user.turno}hs</td>
+                                                        <td></td>
+                                                        <td><button onClick={(e) => liberarHorario(e, user.turno)}>Liberar</button></td>
+                                                    </tr>
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </div>
+
                         }
                         <div className="filaFormulario">
 
@@ -264,8 +227,14 @@ function AdminClients() {
                             }}
                         />}
                         <div className="botonesFiltrado">
-                            <Button onClick={filtrarPorFechaExacta}>Exacto</Button>
-                            <Button onClick={filtrarPorFecha}>A partir de</Button>
+                            <Button onClick={filtrarPorFechaExacta}>Buscar</Button>
+                        </div>
+
+                        <hr />
+
+                        <textarea value={mensaje} name="mensajewsp" className="mensajeWsp" onChange={e => setearMensajeWsp(e)} />
+                        <div className="botonesFiltrado">
+                            <Button onClick={guardarMensaje}>Setear Mensaje</Button>
                         </div>
                     </Offcanvas.Body>
                 </Offcanvas>
