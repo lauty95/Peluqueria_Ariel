@@ -18,32 +18,16 @@ const client = new Client({
         ],
     }
 });
-
-client.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
-});
+let codigoQr
+client.on('qr', qr => codigoQr = qr);
 client.on('ready', () => {
     console.log('Client is ready!');
 });
 client.initialize();
 
-// router.get("/whatsapp", async (req, res) => {
-//     try {
-
-//         client.initialize()
-//         client.on('ready', () => {
-//             console.log('cliente wsp listo')
-//         })
-
-//         client.on('qr', qr => {
-//             qrcode.generate(qr, { small: true })
-//         })
-//         client.initialize()
-//         res.send("conectando...")
-//     } catch (e) {
-//         res.status(500).send(e)
-//     }
-// })
+router.get("/whatsapp", async (req, res) => {
+    res.json(codigoQr)
+})
 
 
 

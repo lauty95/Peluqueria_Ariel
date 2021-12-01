@@ -29,6 +29,7 @@ function AdminClients() {
     const [selectId, setSelectId] = useState()
     const [showCanva, setShowCanva] = useState(false);
     const [mensaje, setMensaje] = useState(true);
+    const [qr, setQr] = useState("")
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -119,7 +120,12 @@ function AdminClients() {
     const setearMensajeWsp = (e) => {
         setMensaje(e.target.value)
     }
-    
+
+    const actualizarQr = () => {
+        await axios.get('/whatsapp')
+            .then(r => setQr(r.data))
+    }
+
     const guardarMensaje = () => {
         axios.post('/setearMensaje', { mensaje })
             .then(r => registroOk(r.data.msg))
@@ -238,6 +244,12 @@ function AdminClients() {
                             <Button onClick={guardarMensaje}>Setear Mensaje</Button>
                         </div>
 
+                        <hr />
+
+                        {qr.length > 0 &&
+                            <QRCode value={qr} />
+                        }
+                        <Button onClick={actualizarQr}>Actualizar QR</Button>
                     </Offcanvas.Body>
                 </Offcanvas>
             </div>
