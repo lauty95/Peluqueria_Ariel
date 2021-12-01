@@ -19,8 +19,10 @@ const client = new Client({
     }
 });
 let codigoQr
+let whatsappOn = false
 client.on('qr', qr => codigoQr = qr);
 client.on('ready', () => {
+    whatsappOn = true
     console.log('Client is ready!');
 });
 client.initialize();
@@ -50,12 +52,13 @@ router.post("/newClient", async (req, res) => {
         res.send(e);
     }
     try {
-
-        client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
-            if (isRegistered) {
-                client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
-            }
-        })
+        if (whatsappOn) {
+            client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
+                if (isRegistered) {
+                    client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+                }
+            })
+        }
     } catch (e) {
         console.log('wsp error connection')
     }
