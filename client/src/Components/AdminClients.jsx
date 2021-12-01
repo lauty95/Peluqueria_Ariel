@@ -122,7 +122,7 @@ function AdminClients() {
     }
 
     const actualizarQr = () => {
-        await axios.get('/whatsapp')
+        axios.get('/whatsapp')
             .then(r => setQr(r.data))
     }
 
