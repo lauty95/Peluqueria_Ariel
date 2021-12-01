@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
 import { Button, Modal, Table, Offcanvas } from 'react-bootstrap';
+import QRCode from "react-qr-code";
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -28,6 +29,7 @@ function AdminClients() {
     const [selectId, setSelectId] = useState()
     const [showCanva, setShowCanva] = useState(false);
     const [mensaje, setMensaje] = useState(true);
+    const [qr, setQr] = useState("")
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -50,12 +52,19 @@ function AdminClients() {
         })
     }
 
+    const obtenerQr = () => {
+        axios.get('/whatsapp')
+            .then(r => setQr(r.data))
+    }
+
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
         axios.get(`/mensajeWsp`)
             .then(r => setMensaje(r.data.mensaje))
     }, [render])
+
+    console.log(qr)
 
     const handleSubmitWrite = (e, tel, turno, dia) => {
         e.preventDefault()
@@ -117,6 +126,10 @@ function AdminClients() {
 
     const setearMensajeWsp = (e) => {
         setMensaje(e.target.value)
+    }
+
+    const actualizarQr = () => {
+        obtenerQr()
     }
 
     const guardarMensaje = () => {
@@ -236,6 +249,13 @@ function AdminClients() {
                         <div className="botonesFiltrado">
                             <Button onClick={guardarMensaje}>Setear Mensaje</Button>
                         </div>
+
+                        <hr />
+
+                        {qr.length > 0 &&
+                            <QRCode value={qr} />
+                        }
+                        <Button onClick={actualizarQr}>Actualizar QR</Button>
                     </Offcanvas.Body>
                 </Offcanvas>
             </div>

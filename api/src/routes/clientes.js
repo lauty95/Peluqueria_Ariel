@@ -13,7 +13,7 @@ const horarios = [
 ]
 const client = new Client();
 
-router.get("whatsapp", (req, res) => {
+router.get("/whatsapp", (req, res) => {
     client.initialize()
     client.on('qr', qr => {
         qrcode.generate(qr, { small: true })
@@ -44,9 +44,10 @@ router.post("/newClient", async (req, res) => {
     } catch (e) {
         res.send(e);
     }
-    client.isRegisteredUser(`${telefono}@c.us`).then(function (isRegistered) {
+    client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
         if (isRegistered) {
-            client.sendMessage(`${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+            console.log(telefono)
+            client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
         }
     })
 })
