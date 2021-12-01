@@ -2,14 +2,29 @@ const { Cliente, Mensaje } = require('../db');
 const express = require('express');
 const router = express();
 const { Op } = require('sequelize');
+const qrcode = require('qrcode-terminal')
+const { Client } = require('whatsapp-web.js')
 
-var idActividad = 10
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
     '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
+const client = new Client();
+
+function whatsappAutomatico() {
+    client.initialize()
+    client.on('qr', qr => {
+        qrcode.generate(qr, { small: true })
+    })
+    client.on('ready', () => {
+        console.log('cliente wsp listo')
+    })
+
+}
+
+whatsappAutomatico()
 
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
@@ -29,6 +44,11 @@ router.post("/newClient", async (req, res) => {
     } catch (e) {
         res.send(e);
     }
+    client.isRegisteredUser(`${telefono}@c.us`).then(function(isRegistered) {
+        if(isRegistered) {
+            client.sendMessage(`${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+        }
+    })  
 })
 
 router.get("/hoursFree/:dia", async (req, res) => {
