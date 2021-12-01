@@ -57,10 +57,10 @@ function AdminClients() {
             .then(r => setMensaje(r.data.mensaje))
     }, [render])
 
-    const handleSubmitWrite = (e, tel) => {
+    const handleSubmitWrite = (e, tel, turno, dia) => {
         e.preventDefault()
         window.open(
-            `https://wa.me/549${tel}?text=${mensaje}`,
+            `https://wa.me/549${tel}?text=${mensaje.replace("HORA", turno)}`,
             '_blank'
         );
     }
@@ -162,7 +162,7 @@ function AdminClients() {
                                                     <tr className="cliente">
                                                         <td><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
-                                                        <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
+                                                        <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono, user.turno, user.dia)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
                                                         <td>{<button name={user.id} onClick={(e) => {
                                                             e.preventDefault()
                                                             setSelectId(user.id)
