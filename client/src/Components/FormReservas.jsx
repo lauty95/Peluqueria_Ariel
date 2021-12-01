@@ -59,7 +59,7 @@ function FormReservas() {
     axios.get(`/hoursFree/${data.dia}`)
       .then(res => {
         if (data.dia === initialDate) {
-          const filtroHora = res.data.filter(el => Number(el.split(":")[0]) > new Date().getHours())
+          const filtroHora = res.data.filter(el => Number(el.split(":")[0]) >= new Date().getHours() && Number(el.split(":")[1]) > new Date().getMinutes())
           if (filtroHora.length === 0) {
             setHoras(['sin horario para hoy'])
           } else {
