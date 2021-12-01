@@ -19,19 +19,31 @@ const client = new Client({
     }
 });
 
-router.get("/whatsapp", async (req, res) => {
-    try {
-        client.on('qr', qr => {
-            qrcode.generate(qr, { small: true })
-            res.send(qr)
-        })
-        // client.on('ready', () => {
-        //     console.log('cliente wsp listo')
-        // })
-    } catch (e) {
-        res.status(500).send(e)
-    }
-})
+client.on('qr', qr => {
+    qrcode.generate(qr, { small: true });
+});
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+client.initialize();
+
+// router.get("/whatsapp", async (req, res) => {
+//     try {
+
+//         client.initialize()
+//         client.on('ready', () => {
+//             console.log('cliente wsp listo')
+//         })
+
+//         client.on('qr', qr => {
+//             qrcode.generate(qr, { small: true })
+//         })
+//         client.initialize()
+//         res.send("conectando...")
+//     } catch (e) {
+//         res.status(500).send(e)
+//     }
+// })
 
 
 
@@ -54,10 +66,9 @@ router.post("/newClient", async (req, res) => {
         res.send(e);
     }
     try {
-        client.initialize()
+
         client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
             if (isRegistered) {
-                console.log(telefono)
                 client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
             }
         })
