@@ -14,14 +14,18 @@ const horarios = [
 const client = new Client();
 
 router.get("/whatsapp", (req, res) => {
-    client.initialize()
-    client.on('qr', qr => {
-        qrcode.generate(qr, { small: true })
-        res.send(qr)
-    })
-    client.on('ready', () => {
-        console.log('cliente wsp listo')
-    })
+    try {
+        client.initialize()
+        client.on('qr', qr => {
+            qrcode.generate(qr, { small: true })
+            res.send(qr)
+        })
+        client.on('ready', () => {
+            console.log('cliente wsp listo')
+        })
+    } catch (e) {
+        console.log(e)
+    }
 })
 
 

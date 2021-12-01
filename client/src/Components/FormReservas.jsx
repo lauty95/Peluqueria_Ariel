@@ -107,6 +107,7 @@ function FormReservas() {
             <div className="filaFormulario">
               <span>ELIGE EL DÍA</span>
               {<KeyboardDatePicker
+                InputProps={{ readOnly: true }}
                 disabled={registrado}
                 name='dia'
                 autoOk
