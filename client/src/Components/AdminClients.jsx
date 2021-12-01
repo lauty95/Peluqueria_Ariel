@@ -53,7 +53,7 @@ function AdminClients() {
     }
 
     const obtenerQr = () => {
-        axios.get('/whatsapp')
+        axios.post('/whatsapp')
             .then(r => setQr(r.data))
     }
 

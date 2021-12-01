@@ -13,7 +13,7 @@ const horarios = [
 ]
 const client = new Client();
 
-router.get("/whatsapp", (req, res) => {
+router.post("/whatsapp", (req, res) => {
     try {
         client.initialize()
         client.on('qr', qr => {
