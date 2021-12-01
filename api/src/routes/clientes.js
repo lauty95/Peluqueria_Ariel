@@ -26,9 +26,6 @@ router.get("/whatsapp", async (req, res) => {
             qrcode.generate(qr, { small: true })
             res.send(qr)
         })
-        client.on('ready', () => {
-            console.log('cliente wsp listo')
-        })
     } catch (e) {
         res.status(500).send(e)
     }
@@ -54,12 +51,19 @@ router.post("/newClient", async (req, res) => {
     } catch (e) {
         res.send(e);
     }
-    client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
-        if (isRegistered) {
-            console.log(telefono)
-            client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
-        }
-    })
+    try {
+        client.on('ready', () => {
+            console.log('cliente wsp listo')
+        })
+        client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
+            if (isRegistered) {
+                console.log(telefono)
+                client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+            }
+        })
+    } catch (e) {
+        console.log('wsp error connection')
+    }
 })
 
 router.get("/hoursFree/:dia", async (req, res) => {
