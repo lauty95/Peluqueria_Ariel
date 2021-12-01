@@ -117,14 +117,14 @@ function AdminClients() {
 
     const setearMensajeWsp = (e) => {
         setMensaje(e.target.value)
-        handleCloseCanva()
     }
 
     const guardarMensaje = () => {
         axios.post('/setearMensaje', { mensaje })
             .then(r => registroOk(r.data.msg))
+        handleCloseCanva()
     }
-    
+
     return (
         registrados.length > 0 ?
             <div>
