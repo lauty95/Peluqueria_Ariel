@@ -1,4 +1,4 @@
-const { Cliente } = require('../db');
+const { Cliente, Mensaje } = require('../db');
 const express = require('express');
 const router = express();
 const { Op } = require('sequelize');
@@ -56,7 +56,7 @@ router.get("/getHours", async (req, res) => {
 
 router.get('/getClients/:fecha', async (req, res) => {
     const { fecha } = req.params
-    const clientes = await Cliente.findAll({
+    var clientes = await Cliente.findAll({
         where: {
             dia: {
                 [Op.eq]: fecha
@@ -64,7 +64,20 @@ router.get('/getClients/:fecha', async (req, res) => {
         }
     })
 
-    res.status(200).send(clientes)
+    let horariosAAgregar = []
+
+    for (let i = 0; i < horarios.length; i++)
+        horariosAAgregar[i] = horarios[i]
+
+    for (let i = 0; i < horarios.length; i++) {
+        for (let j = 0; j < clientes.length; j++) {
+            if (clientes[j].turno === horarios[i]) {
+                horariosAAgregar[i] = clientes[j]
+            }
+        }
+    }
+
+    res.status(200).send(horariosAAgregar)
 })
 
 router.post('/deleteClient/:id', async (req, res) => {
@@ -134,12 +147,27 @@ router.post('/liberarHorario/:dia/:horario', async (req, res) => {
     }
 })
 
-router.get('/getAllClients', async (req, res) => {
+router.post('/setearMensaje', async (req, res) => {
+    const { mensaje } = req.body
     try {
-        const clientes = await Cliente.findAll()
-        res.status(200).send(clientes)
+        await Mensaje.create({
+            mensaje
+        })
+            .then(() => res.status(200).send({ msg: 'Mensaje guardado' }))
     } catch (e) {
-        res.status(400).send(e)
+        console.log(e)
+        res.status(500).send({ msg: 'Error al guardar el mensaje' })
+    }
+})
+
+router.get('/mensajeWsp', async (req, res) => {
+    try {
+        let mensaje = await Mensaje.findAll()
+        let respuesta = mensaje.pop()
+        res.status(200).json(respuesta)
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({ msg: 'Error al obtener el mensaje' })
     }
 })
 
