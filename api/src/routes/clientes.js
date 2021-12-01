@@ -21,10 +21,10 @@ router.get("/whatsapp", (req, res) => {
             res.send(qr)
         })
         client.on('ready', () => {
-            console.log('cliente wsp listo')
+            res.send('cliente wsp listo')
         })
     } catch (e) {
-        console.log(e)
+        res.status(500).send(e)
     }
 })
 
