@@ -122,9 +122,9 @@ function AdminClients() {
     const guardarMensaje = () => {
         axios.post('/setearMensaje', { mensaje })
             .then(r => registroOk(r.data.msg))
-        handleCloseCanva()
+     
+            handleCloseCanva()
     }
-
     return (
         registrados.length > 0 ?
             <div>
