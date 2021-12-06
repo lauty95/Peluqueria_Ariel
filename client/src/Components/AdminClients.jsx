@@ -135,7 +135,8 @@ function AdminClients(props) {
     const mostrarTodos = () => {
         axios.get(`/allClients`)
             .then(r => {
-                const filtrados = r.data.filter(el => transformarFecha(el.dia) >= new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()))
+                let filtrados = r.data.filter(el => transformarFecha(el.dia) >= new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()))
+                filtrados = filtrados.sort((a, b) => transformarFecha(a.dia) - transformarFecha(b.dia))
                 setRegistrados(filtrados)
             })
         setMostrar(!mostrar)
