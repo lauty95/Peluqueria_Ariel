@@ -8,12 +8,15 @@ function Graphics(props) {
     const fechaActual = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
     const [values, setValues] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     const [semana, setSemana] = useState([0, 0, 0, 0, 0, 0])
+    const [precio, setPrecio] = useState(0)
 
     useEffect(() => {
         axios.get('/statics')
             .then(r => setValues(r.data))
         axios.get(`/semana/${fechaActual}`)
             .then(r => setSemana(r.data))
+        axios.get(`/precio`)
+            .then(r => setPrecio(r.data.precio))
     }, [])
 
     const mayor = () => {
@@ -70,6 +73,14 @@ function Graphics(props) {
                 borderColor: '#FFBE00',
                 borderWidth: 3
             }]
+            // {
+            //     label: "Ganancia",
+            //     data: values.map(val => val * 400),
+            //     stroke: 'start',
+            //     backgroundColor: gradient,
+            //     borderColor: '#FFBE00',
+            //     borderWidth: 3
+            // }]
         }
     }
 
@@ -156,6 +167,11 @@ function Graphics(props) {
                             <tr>
                                 {
                                     semana.map(el => <td>{el.cantidad}</td>)
+                                }
+                            </tr>
+                            <tr>
+                                {
+                                    semana.map(el => <td>${el.cantidad * precio}</td>)
                                 }
                             </tr>
                         </tbody>

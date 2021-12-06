@@ -17,4 +17,8 @@ module.exports = (sequelize) => {
   const Mensaje = sequelize.define('mensaje', {
     mensaje: { type: DataTypes.TEXT, allowNull: true }
   })
+
+  const Precio = sequelize.define('precio', {
+    precio: { type: DataTypes.INTEGER, allowNull: true }
+  })
 };

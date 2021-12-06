@@ -123,6 +123,11 @@ select {
     height: 100px;
 }
 
+.precio{
+    width: 100%;
+    margin-bottom: 15px;
+}
+
 .ocupado{
     background: rgb(103, 103, 109);
     

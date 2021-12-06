@@ -1,4 +1,4 @@
-const { Cliente, Mensaje } = require('../db');
+const { Cliente, Mensaje, Precio } = require('../db');
 const express = require('express');
 const router = express();
 const { Op } = require('sequelize');
@@ -207,6 +207,33 @@ router.get('/mensajeWsp', async (req, res) => {
     } catch (e) {
         console.log(e)
         res.status(500).send({ msg: 'Error al obtener el mensaje' })
+    }
+})
+router.post('/setearPrecio', async (req, res) => {
+    const { precio } = req.body
+    try {
+        await Precio.destroy({
+            where: {},
+            truncate: true
+        })
+        await Precio.create({
+            precio: precio
+        })
+            .then(() => res.status(200).send({ msg: 'Precio guardado' }))
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({ msg: 'Error al guardar el precio' })
+    }
+})
+
+router.get('/precio', async (req, res) => {
+    try {
+        let precio = await Precio.findAll()
+        let respuesta = precio.pop()
+        res.status(200).json(respuesta)
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({ msg: 'Error al obtener el precio' })
     }
 })
 

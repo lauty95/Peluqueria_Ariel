@@ -28,6 +28,7 @@ function AdminClients(props) {
     const [selectId, setSelectId] = useState()
     const [showCanva, setShowCanva] = useState(false);
     const [mensaje, setMensaje] = useState(true);
+    const [precio, setPrecio] = useState();
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -121,6 +122,11 @@ function AdminClients(props) {
 
     const guardarMensaje = () => {
         axios.post('/setearMensaje', { mensaje })
+            .then(r => registroOk(r.data.msg))
+        handleCloseCanva()
+    }
+    const guardarPrecio = () => {
+        axios.post('/setearPrecio', { precio })
             .then(r => registroOk(r.data.msg))
         handleCloseCanva()
     }
@@ -242,6 +248,11 @@ function AdminClients(props) {
                         </div>
 
                         <hr />
+
+                        <input type="number" value={precio} name="precio" className="precio" onChange={e => setPrecio(e.target.value)} />
+                        <div className="botonesFiltrado">
+                            <Button onClick={guardarPrecio}>Setear Precio</Button>
+                        </div>
                     </Offcanvas.Body>
                 </Offcanvas>
             </div>
