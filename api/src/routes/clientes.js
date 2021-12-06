@@ -115,6 +115,19 @@ router.get('/getClients/:fecha', async (req, res) => {
     res.status(200).send(horariosAAgregar)
 })
 
+router.get('/allClients', async (req, res) => {
+    try {
+        const clientes = await Cliente.findAll({
+            where: {
+                ocupado: 'Cliente'
+            }
+        })
+        res.status(200).send(clientes)
+    } catch (e) {
+        res.status(500).send({ error: e })
+    }
+})
+
 router.post('/deleteClient/:id', async (req, res) => {
     const { id } = req.params
     try {

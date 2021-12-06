@@ -29,6 +29,7 @@ function AdminClients(props) {
     const [showCanva, setShowCanva] = useState(false);
     const [mensaje, setMensaje] = useState(true);
     const [precio, setPrecio] = useState();
+    const [mostrar, setMostrar] = useState(true)
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -131,8 +132,19 @@ function AdminClients(props) {
         handleCloseCanva()
     }
 
+    const mostrarTodos = () => {
+        axios.get(`/allClients`)
+            .then(r => {
+                const filtrados = r.data.filter(el => transformarFecha(el.dia) >= new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()))
+                setRegistrados(filtrados)
+            })
+        setMostrar(!mostrar)
+    }
 
-
+    const reset = () => {
+        setRender(!render)
+        setMostrar(!mostrar)
+    }
     return (
         registrados.length > 0 ?
             <div>
@@ -238,6 +250,12 @@ function AdminClients(props) {
                         />}
                         <div className="botonesFiltrado">
                             <Button onClick={filtrarPorFechaExacta}>Buscar</Button>
+                            {
+                                mostrar ?
+                                    <Button onClick={mostrarTodos}>Mostrar Todos</Button>
+                                    :
+                                    <Button onClick={reset}>Reset</Button>
+                            }
                         </div>
 
                         <hr />
