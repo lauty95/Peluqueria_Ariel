@@ -133,7 +133,7 @@ function FormReservas() {
                 name='dia'
                 autoOk
                 className={classes.inputFecha}
-                // minDate={fechaActual}
+                minDate={fechaActual}
                 format="dd/MM/yyyy"
                 value={dateToShow}
                 InputAdornmentProps={{ position: "start" }}
