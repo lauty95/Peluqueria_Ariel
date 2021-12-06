@@ -4,6 +4,7 @@ const router = express();
 const { Op } = require('sequelize');
 const qrcode = require('qrcode-terminal')
 const { Client } = require('whatsapp-web.js')
+const { v4: uuidv4 } = require('uuid');
 
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
@@ -11,25 +12,25 @@ const horarios = [
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
-const client = new Client({
-    puppeteer: {
-        args: [
-            '--no-sandbox',
-        ],
-    }
-});
-let codigoQr
-let whatsappOn = false
-client.on('qr', qr => codigoQr = qr);
-client.on('ready', () => {
-    whatsappOn = true
-    console.log('Client is ready!');
-});
-client.initialize();
+// const client = new Client({
+//     puppeteer: {
+//         args: [
+//             '--no-sandbox',
+//         ],
+//     }
+// });
+// let codigoQr
+// let whatsappOn = false
+// client.on('qr', qr => codigoQr = qr);
+// client.on('ready', () => {
+//     whatsappOn = true
+//     console.log('Client is ready!');
+// });
+// client.initialize();
 
-router.get("/whatsapp", async (req, res) => {
-    res.json(codigoQr)
-})
+// router.get("/whatsapp", async (req, res) => {
+//     res.json(codigoQr)
+// })
 
 
 
@@ -49,19 +50,20 @@ router.post("/newClient", async (req, res) => {
         });
         res.status(200).send({ msg: 'created' })
     } catch (e) {
-        res.send(e);
+        console.log(e)
+        res.status(500).send(e);
     }
-    try {
-        if (whatsappOn) {
-            client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
-                if (isRegistered) {
-                    client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
-                }
-            })
-        }
-    } catch (e) {
-        console.log('wsp error connection')
-    }
+    // try {
+    //     if (whatsappOn) {
+    //         client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
+    //             if (isRegistered) {
+    //                 client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+    //             }
+    //         })
+    //     }
+    // } catch (e) {
+    //     console.log('wsp error connection')
+    // }
 })
 
 router.get("/hoursFree/:dia", async (req, res) => {
@@ -183,6 +185,10 @@ router.post('/liberarHorario/:dia/:horario', async (req, res) => {
 router.post('/setearMensaje', async (req, res) => {
     const { mensaje } = req.body
     try {
+        await Mensaje.destroy({
+            where: {},
+            truncate: true
+        })
         await Mensaje.create({
             mensaje
         })
@@ -201,6 +207,52 @@ router.get('/mensajeWsp', async (req, res) => {
     } catch (e) {
         console.log(e)
         res.status(500).send({ msg: 'Error al obtener el mensaje' })
+    }
+})
+
+router.get('/statics', async (req, res) => {
+    try {
+        const clientes = await Cliente.findAll({
+            where: {
+                ocupado: 'Cliente'
+            }
+        })
+        let array = []
+        for (let i = 1; i <= 12; i++) {
+            array[i - 1] = clientes.filter(el => Number(el.dia.split("-")[1]) === i && Number(el.dia.split("-")[2]) === new Date().getFullYear() - 2000).length
+        }
+
+        res.status(200).send(array)
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({ msg: e })
+    }
+})
+
+router.get('/semana/:dia', async (req, res) => {
+    let { dia } = req.params
+    let semana = []
+    let array = []
+    let filtrado = []
+    dia = dia.split("-")
+    for (let i = 0; i < 6; i++) {
+        semana.push(`${Number(dia[0]) + i}-${dia[1]}-${dia[2]}`)
+    }
+    try {
+        const clientes = await Cliente.findAll({
+            where: {
+                ocupado: 'Cliente',
+                dia: { [Op.or]: [semana] }
+            }
+        })
+        for (let i = 0; i < 6; i++) {
+            filtrado = clientes.filter(el => el.dia === semana[i])
+            array[i] = { dia: semana[i], cantidad: filtrado.length }
+        }
+        res.status(200).send(array)
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({ msg: e })
     }
 })
 

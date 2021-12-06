@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import axios from 'axios'
 import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
-
+import imgWsp from './../assets/wsp.png'
 
 const useStyle = makeStyles({
   inputFecha: {
@@ -59,7 +59,13 @@ function FormReservas() {
     axios.get(`/hoursFree/${data.dia}`)
       .then(res => {
         if (data.dia === initialDate) {
-          const filtroHora = res.data.filter(el => Number(el.split(":")[0]) >= new Date().getHours())
+          const filtroHora = res.data.filter(el => {
+            if (Number(el.split(":")[0]) === new Date().getHours()) {
+              return Number(el.split(":")[1]) >= new Date().getMinutes()
+            } else {
+              return (Number(el.split(":")[0]) > new Date().getHours())
+            }
+          })
           if (filtroHora.length === 0) {
             setHoras(['sin horario para hoy'])
           } else {
@@ -70,7 +76,7 @@ function FormReservas() {
         }
       })
       .catch(() => registroFail())
-  }, [dateToShow])
+  }, [dateToShow, data.dia, initialDate])
 
   const handleChange = (e) => {
     setData((prevData) => {
@@ -87,6 +93,21 @@ function FormReservas() {
         .catch(() => registroFail())
     } else {
       registroFail("Debes elegir un horario")
+    }
+  }
+
+  const contactar = (e) => {
+    e.preventDefault()
+    if (data.nombre) {
+      window.open(
+        `https://wa.me/5493492322020?text=Hola Ariel! Soy ${data.nombre}, me estoy contactando desde tu sitio web`,
+        '_blank'
+      );
+    } else {
+      window.open(
+        `https://wa.me/5493492322020?text=Hola Ariel! Me contacto desde tu sitio web`,
+        '_blank'
+      );
     }
   }
 
@@ -112,7 +133,7 @@ function FormReservas() {
                 name='dia'
                 autoOk
                 className={classes.inputFecha}
-                minDate={fechaActual}
+                // minDate={fechaActual}
                 format="dd/MM/yyyy"
                 value={dateToShow}
                 InputAdornmentProps={{ position: "start" }}
@@ -139,9 +160,10 @@ function FormReservas() {
             </div>
             <button disabled={registrado} className="reservar" type="submit">Reservar</button>
           </form>
+          <button className="reservar" onClick={contactar}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
         </div>
         :
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center loading">
           <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>

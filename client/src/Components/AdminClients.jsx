@@ -6,7 +6,6 @@ import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
 import { Button, Modal, Table, Offcanvas } from 'react-bootstrap';
-import QRCode from "react-qr-code";
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -20,7 +19,7 @@ const useStyle = makeStyles({
 
 const diaActual = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
 
-function AdminClients() {
+function AdminClients(props) {
     const [fechaActual, setFechaActual] = useState(new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-'))
     const [dateToShow, setDateToShow] = useState(new Date())
     const [registrados, setRegistrados] = useState([])
@@ -29,7 +28,6 @@ function AdminClients() {
     const [selectId, setSelectId] = useState()
     const [showCanva, setShowCanva] = useState(false);
     const [mensaje, setMensaje] = useState(true);
-    const [qr, setQr] = useState("")
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -38,7 +36,7 @@ function AdminClients() {
     const handleShow = () => setShow(true);
 
     const classes = useStyle();
-
+    console.log(props)
     const { enqueueSnackbar } = useSnackbar();
 
     const registroOk = (msg) => {
@@ -57,7 +55,7 @@ function AdminClients() {
             .then(r => setRegistrados(r.data))
         axios.get(`/mensajeWsp`)
             .then(r => setMensaje(r.data.mensaje))
-    }, [render])
+    }, [render, fechaActual])
 
     const handleSubmitWrite = (e, tel, turno, dia) => {
         e.preventDefault()
@@ -121,16 +119,13 @@ function AdminClients() {
         setMensaje(e.target.value)
     }
 
-    const actualizarQr = () => {
-        axios.get('/whatsapp')
-            .then(r => setQr(r.data))
-    }
-
     const guardarMensaje = () => {
         axios.post('/setearMensaje', { mensaje })
             .then(r => registroOk(r.data.msg))
         handleCloseCanva()
     }
+
+
 
     return (
         registrados.length > 0 ?
@@ -142,9 +137,11 @@ function AdminClients() {
                             <Button variant="primary" onClick={handleShowCanva}>
                                 Opciones
                             </Button>
+                            <Button variant="primary" onClick={() => props.history.push("/statistics")}>
+                                Estadisticas
+                            </Button>
                         </div>
                         {
-
                             <div className="filaFormulario">
                                 <Table responsive="sm">
                                     <thead>
@@ -245,17 +242,14 @@ function AdminClients() {
                         </div>
 
                         <hr />
-
-                        {qr.length > 0 &&
-                            <QRCode value={qr} />
-                        }
-                        <Button onClick={actualizarQr}>Actualizar QR</Button>
                     </Offcanvas.Body>
                 </Offcanvas>
             </div>
             :
-            <div>
-                loading
+            <div class="d-flex justify-content-center loading">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
     )
 }
