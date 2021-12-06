@@ -27,6 +27,7 @@ function FormReservas() {
   const [horas, setHoras] = useState([])
   const [registrado, setRegistrado] = useState(false)
   const [show, setShow] = useState(false);
+  const [pickerStatus, setPickerStatus] = useState(false)
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -125,6 +126,9 @@ function FormReservas() {
             <div className="filaFormulario">
               <span>ELIGE EL DÍA</span>
               {<KeyboardDatePicker
+                onClick={() => setPickerStatus(true)}
+                onClose={() => setPickerStatus(false)}
+                open={pickerStatus}
                 InputProps={{ readOnly: true }}
                 disabled={registrado}
                 name='dia'
@@ -175,7 +179,7 @@ function FormReservas() {
             Number(data.dia.split("-")[0]) === Number(initialDate.split("-")[0]) + 1 ? 'mañana ' :
               'el dia ' + data.dia.replaceAll("-", "/") + " "
         }
-        en el turno de las {data.turno} hs fue registrado con éxito
+          en el turno de las {data.turno} hs fue registrado con éxito
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={handleClose}>
