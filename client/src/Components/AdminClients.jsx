@@ -36,7 +36,7 @@ function AdminClients(props) {
     const handleShow = () => setShow(true);
 
     const classes = useStyle();
-    console.log(props)
+
     const { enqueueSnackbar } = useSnackbar();
 
     const registroOk = (msg) => {
