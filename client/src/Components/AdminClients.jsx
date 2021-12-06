@@ -89,9 +89,11 @@ function AdminClients(props) {
                 registroOk('Hubo un error')
             })
     }
-    const transformarFecha = (input) => {
+    const transformarFecha = (input, turno) => {
         const fecha = input.split('-')
-        return new Date("" + 20 + fecha[2], fecha[1] - 1, fecha[0])
+        if (!turno) return new Date("" + 20 + fecha[2], fecha[1] - 1, fecha[0])
+        const hora = turno.split(':')
+        return new Date("" + 20 + fecha[2], fecha[1] - 1, fecha[0], hora[0], hora[1])
     }
 
     const hoy = (dia) => {
@@ -136,7 +138,7 @@ function AdminClients(props) {
         axios.get(`/allClients`)
             .then(r => {
                 let filtrados = r.data.filter(el => transformarFecha(el.dia) >= new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()))
-                filtrados = filtrados.sort((a, b) => transformarFecha(a.dia) - transformarFecha(b.dia))
+                filtrados = filtrados.sort((a, b) => transformarFecha(a.dia, a.turno) - transformarFecha(b.dia, b.turno))
                 setRegistrados(filtrados)
             })
         setMostrar(!mostrar)
