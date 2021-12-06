@@ -88,9 +88,13 @@ function FormReservas() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (data.turno !== '') {
-      axios.post('/newClient', data)
-        .then(() => registroOk())
-        .catch(() => registroFail())
+      if (data.telefono.length === 10) {
+        axios.post('/newClient', data)
+          .then(() => registroOk())
+          .catch(() => registroFail())
+      } else {
+        registroFail("Revise su número de whatsapp, debe tener 10 dítigots")
+      }
     } else {
       registroFail("Debes elegir un horario")
     }
