@@ -66,6 +66,8 @@ function AdminClients(props) {
         }
         axios.get(`/mensajeWsp`)
             .then(r => setMensaje(r.data.mensaje))
+        axios.get(`/precio`)
+            .then(r => setPrecio(r.data.precio))
     }, [render, fechaActual])
 
     const handleSubmitWrite = (e, tel, turno, dia) => {
