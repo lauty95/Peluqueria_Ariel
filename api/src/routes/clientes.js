@@ -42,7 +42,7 @@ router.post("/newClient", async (req, res) => {
     const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1] + Number(telSplited))
     try {
         await Cliente.create({
-            id: id,
+            id: uuidv4(),
             nombre,
             telefono,
             dia,
