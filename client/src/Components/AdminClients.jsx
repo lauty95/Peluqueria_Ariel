@@ -30,6 +30,7 @@ function AdminClients(props) {
     const [mensaje, setMensaje] = useState(true);
     const [precio, setPrecio] = useState();
     const [mostrar, setMostrar] = useState(true)
+    const [pickerStatus, setPickerStatus] = useState(false)
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -249,6 +250,10 @@ function AdminClients(props) {
                     <Offcanvas.Body>
                         <span>Filtrar por día</span>
                         {<KeyboardDatePicker
+                            onClick={() => setPickerStatus(true)}
+                            onClose={() => setPickerStatus(false)}
+                            open={pickerStatus}
+                            InputProps={{ readOnly: true }}
                             name='dia'
                             autoOk
                             className={classes.inputFecha}

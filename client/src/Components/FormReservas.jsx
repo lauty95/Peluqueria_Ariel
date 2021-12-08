@@ -125,7 +125,8 @@ function FormReservas() {
             </div>
             <div className="filaFormulario">
               <span>ELIGE EL DÍA</span>
-              {<KeyboardDatePicker
+              {
+                <KeyboardDatePicker
                 onClick={() => setPickerStatus(true)}
                 onClose={() => setPickerStatus(false)}
                 open={pickerStatus}
@@ -145,7 +146,8 @@ function FormReservas() {
                     return { ...currentData, dia: fechaelegida }
                   })
                 }}
-              />}
+              />
+              }
             </div>
             <div className="filaFormulario">
               <span>ELIGE EL HORARIO</span>

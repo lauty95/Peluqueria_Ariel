@@ -4,7 +4,6 @@ const router = express();
 const { Op } = require('sequelize');
 const qrcode = require('qrcode-terminal')
 const { Client } = require('whatsapp-web.js')
-const { v4: uuidv4 } = require('uuid');
 
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
@@ -33,16 +32,14 @@ const horarios = [
 // })
 
 
-
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
-    const turnoSplited = turno.split(':')
-    const diaSplited = dia.split('-')
-    const telSplited = telefono.toString().slice(6, 10)
-    const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1] + Number(telSplited))
+    const mili = new Date().getMilliseconds().toString()
+    const id = Math.floor(telefono / mili)
+    console.log(id)
     try {
         await Cliente.create({
-            id: uuidv4(),
+            id: id,
             nombre,
             telefono,
             dia,
