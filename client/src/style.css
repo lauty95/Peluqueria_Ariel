@@ -124,8 +124,18 @@ select {
 }
 
 .precio {
-    width: 100%;
-    margin-bottom: 15px;
+    width: 50%;
+}
+
+.setearPrecio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qr {
+    display: flex;
+    flex-direction: column;
 }
 
 .ocupado {
@@ -181,4 +191,3 @@ select {
         margin-right: auto;
     }
 }
-
