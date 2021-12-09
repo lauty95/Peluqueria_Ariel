@@ -59,13 +59,17 @@ function AdminClients(props) {
         })
     }
 
-    useEffect(() => {
+    const manana = () => {
         const dia = Number(fechaActual.split("-")[0])
-        const hora = new Date().getHours()
         let manana = fechaActual.split("-")
         manana[0] = (dia + 1).toString()
+        return manana.join().replaceAll(",", "-")
+    }
+
+    useEffect(() => {
+        const hora = new Date().getHours()
         if (hora >= 20) {
-            axios.get(`/getClients/${manana.join().replaceAll(",", "-")}`)
+            axios.get(`/getClients/${manana}`)
                 .then(r => setRegistrados(r.data))
         } else {
             axios.get(`/getClients/${fechaActual}`)
@@ -184,7 +188,11 @@ function AdminClients(props) {
             <div>
                 <div className="contenedorFormulario">
                     <div className="cabecera">
-                        <h3>Administración</h3> <h4>{fechaActual}</h4>
+                        <h3>Administración</h3> <h4>{new Date().getHours() >= 20 ?
+                            manana()
+                            :
+                            fechaActual
+                        }</h4>
                     </div>
                     <form className="formularioReservas">
                         <div className="botonesFiltrado">

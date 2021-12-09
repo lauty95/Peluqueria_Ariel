@@ -62,21 +62,25 @@ function FormReservas() {
   useEffect(() => {
     axios.get(`/hoursFree/${data.dia}`)
       .then(res => {
-        if (data.dia === initialDate) {
-          const filtroHora = res.data.filter(el => {
-            if (Number(el.split(":")[0]) === new Date().getHours()) {
-              return Number(el.split(":")[1]) >= new Date().getMinutes()
-            } else {
-              return (Number(el.split(":")[0]) > new Date().getHours())
-            }
-          })
-          if (filtroHora.length === 0) {
-            setHoras(['sin horario para hoy'])
-          } else {
-            setHoras(filtroHora)
-          }
+        if (res.data.length === 0) {
+          setHoras(['sin horario para hoy'])
         } else {
-          setHoras(res.data)
+          if (data.dia === initialDate) {
+            const filtroHora = res.data.filter(el => {
+              if (Number(el.split(":")[0]) === new Date().getHours()) {
+                return Number(el.split(":")[1]) >= new Date().getMinutes()
+              } else {
+                return (Number(el.split(":")[0]) > new Date().getHours())
+              }
+            })
+            if (filtroHora.length === 0) {
+              setHoras(['sin horario para hoy'])
+            } else {
+              setHoras(filtroHora)
+            }
+          } else {
+            setHoras(res.data)
+          }
         }
       })
       .catch(() => setMensajeDeEspera(true))
