@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
 import { Button, Modal, Table, Offcanvas } from 'react-bootstrap';
+import QRCode from "react-qr-code";
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -32,6 +33,7 @@ function AdminClients(props) {
     const [precio, setPrecio] = useState();
     const [mostrar, setMostrar] = useState(true)
     const [pickerStatus, setPickerStatus] = useState(false)
+    const [qr, setearQr] = useState({ qr: '' })
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -171,6 +173,11 @@ function AdminClients(props) {
     const reset = () => {
         setRender(!render)
         setMostrar(!mostrar)
+    }
+
+    const llamarQr = () => {
+        axios.get('/whatsapp')
+            .then(r => setearQr(r.data))
     }
     return (
         registrados.length > 0 ?
@@ -330,11 +337,28 @@ function AdminClients(props) {
                         </div>
 
                         <hr />
-
-                        <input type="number" value={precio} name="precio" className="precio" onChange={e => setPrecio(e.target.value)} />
-                        <div className="botonesFiltrado">
-                            <Button onClick={guardarPrecio}>Setear Precio</Button>
+                        <div className='setearPrecio'>
+                            <input type="number" value={precio} name="precio" className="precio" onChange={e => setPrecio(e.target.value)} />
+                            <div className="botonesFiltrado">
+                                <Button onClick={guardarPrecio}>Setear Precio</Button>
+                            </div>
                         </div>
+
+                        <hr />
+                        <div className='qr'>
+                            <Button onClick={llamarQr}>Mostrar Qr</Button>
+
+                            {
+                                qr.qr === 'sesion iniciada' ?
+                                    <span>Sesión iniciada</span>
+                                    :
+                                    qr.qr.length > 0 ?
+                                        <QRCode value={qr.qr} />
+                                        :
+                                        <></>
+                            }
+                        </div>
+
                     </Offcanvas.Body>
                 </Offcanvas>
             </div>
