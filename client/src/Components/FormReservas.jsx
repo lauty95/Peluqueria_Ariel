@@ -28,6 +28,7 @@ function FormReservas() {
   const [registrado, setRegistrado] = useState(false)
   const [show, setShow] = useState(false);
   const [pickerStatus, setPickerStatus] = useState(false)
+  const [mensajeDeEspera, setMensajeDeEspera] = useState(false)
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -36,7 +37,7 @@ function FormReservas() {
   const { enqueueSnackbar } = useSnackbar();
 
   const registroFail = (msg) => {
-    if (msg === '') {
+    if (!msg) {
       msg = 'Hubo un error con nuestros servidores'
     }
     enqueueSnackbar(msg, {
@@ -69,7 +70,7 @@ function FormReservas() {
           setHoras(res.data)
         }
       })
-      .catch(() => registroFail())
+      .catch(() => setMensajeDeEspera(true))
   }, [dateToShow, data.dia, initialDate])
 
   const handleChange = (e) => {
@@ -83,6 +84,7 @@ function FormReservas() {
     e.preventDefault()
     if (data.turno !== '') {
       if (data.telefono.length === 10) {
+        setRegistrado(true)
         axios.post('/newClient', data)
           .then(() => handleShow())
           .catch(() => registroFail())
@@ -127,26 +129,26 @@ function FormReservas() {
               <span>ELIGE EL DÍA</span>
               {
                 <KeyboardDatePicker
-                onClick={() => setPickerStatus(true)}
-                onClose={() => setPickerStatus(false)}
-                open={pickerStatus}
-                InputProps={{ readOnly: true }}
-                disabled={registrado}
-                name='dia'
-                autoOk
-                className={classes.inputFecha}
-                minDate={fechaActual}
-                format="dd/MM/yyyy"
-                value={dateToShow}
-                InputAdornmentProps={{ position: "start" }}
-                onChange={date => {
-                  const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
-                  setData((currentData) => {
-                    setDateToShow(date)
-                    return { ...currentData, dia: fechaelegida }
-                  })
-                }}
-              />
+                  onClick={() => setPickerStatus(true)}
+                  onClose={() => setPickerStatus(false)}
+                  open={pickerStatus}
+                  InputProps={{ readOnly: true }}
+                  disabled={registrado}
+                  name='dia'
+                  autoOk
+                  className={classes.inputFecha}
+                  minDate={fechaActual}
+                  format="dd/MM/yyyy"
+                  value={dateToShow}
+                  InputAdornmentProps={{ position: "start" }}
+                  onChange={date => {
+                    const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                    setData((currentData) => {
+                      setDateToShow(date)
+                      return { ...currentData, dia: fechaelegida }
+                    })
+                  }}
+                />
               }
             </div>
             <div className="filaFormulario">
@@ -166,10 +168,16 @@ function FormReservas() {
           <button className="reservar" onClick={contactar}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
         </div>
         :
-        <div class="d-flex justify-content-center loading">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+        <div className='espera'>
+          <div class="d-flex justify-content-center loading">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
           </div>
+          {
+            mensajeDeEspera &&
+            <p>Esto está demorando, pero aguarda un momentito y te conectaremos</p>
+          }
         </div>
       }
       <Modal show={show} onHide={handleClose}>

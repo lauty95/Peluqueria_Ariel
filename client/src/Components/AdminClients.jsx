@@ -25,6 +25,7 @@ function AdminClients(props) {
     const [registrados, setRegistrados] = useState([])
     const [render, setRender] = useState(false)
     const [show, setShow] = useState(false);
+    const [showTomarseElDia, setShowTomarseElDia] = useState(false);
     const [selectId, setSelectId] = useState()
     const [showCanva, setShowCanva] = useState(false);
     const [mensaje, setMensaje] = useState(true);
@@ -37,6 +38,9 @@ function AdminClients(props) {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleCloseTomarseElDia = () => setShowTomarseElDia(false);
+    const handleShowTomarseElDia = () => setShowTomarseElDia(true);
 
     const classes = useStyle();
 
@@ -71,10 +75,20 @@ function AdminClients(props) {
             .then(r => setPrecio(r.data.precio))
     }, [render, fechaActual])
 
-    const handleSubmitWrite = (e, tel, turno, dia) => {
+    const handleSubmitWrite = (e, tel, turno) => {
         e.preventDefault()
+        if (mensaje) {
+            window.open(
+                `https://wa.me/549${tel}?text=${mensaje.replace("HORA", `*${turno} hs*`)}`,
+                '_blank'
+            );
+        } else {
+            registroOk("Debes setear un mensaje antes de enviar algo")
+        }
+    }
+    const handleSubmitProfile = (tel) => {
         window.open(
-            `https://wa.me/549${tel}?text=${mensaje.replace("HORA", `*${turno} hs*`)}`,
+            `https://wa.me/549${tel}`,
             '_blank'
         );
     }
@@ -125,12 +139,6 @@ function AdminClients(props) {
             })
     }
 
-    const filtrarPorFechaExacta = () => {
-        axios.get(`/getClients/${fechaActual}`)
-            .then(r => setRegistrados(r.data))
-        handleCloseCanva()
-    }
-
     const setearMensajeWsp = (e) => {
         setMensaje(e.target.value)
     }
@@ -144,6 +152,10 @@ function AdminClients(props) {
         axios.post('/setearPrecio', { precio })
             .then(r => registroOk(r.data.msg))
         handleCloseCanva()
+    }
+
+    const tomarseElDia = () => {
+        handleShowTomarseElDia()
     }
 
     const mostrarTodos = () => {
@@ -164,7 +176,9 @@ function AdminClients(props) {
         registrados.length > 0 ?
             <div>
                 <div className="contenedorFormulario">
-                    <h3>Administración</h3>
+                    <div className="cabecera">
+                        <h3>Administración</h3> <h4>{fechaActual}</h4>
+                    </div>
                     <form className="formularioReservas">
                         <div className="botonesFiltrado">
                             <Button variant="primary" onClick={handleShowCanva}>
@@ -172,6 +186,9 @@ function AdminClients(props) {
                             </Button>
                             <Button variant="primary" onClick={() => props.history.push("/statistics")}>
                                 Estadisticas
+                            </Button>
+                            <Button variant="info" onClick={tomarseElDia}>
+                                Tomarse el día
                             </Button>
                         </div>
                         {
@@ -190,14 +207,14 @@ function AdminClients(props) {
                                             !user.ocupado ?
                                                 <tr>
                                                     <td>Libre</td>
-                                                    <td>{user}hs</td>
+                                                    <td>{user} hs</td>
                                                     <td></td>
                                                     <td>{<button name={user} onClick={(e) => ocuparHorario(e, user)}>Ocupar</button>}</td>
                                                 </tr>
                                                 :
                                                 user.ocupado === 'Cliente' ?
                                                     <tr className="cliente">
-                                                        <td><b>{user.nombre}</b></td>
+                                                        <td onClick={() => handleSubmitProfile(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
                                                         <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono, user.turno, user.dia)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
                                                         <td>{<button name={user.id} onClick={(e) => {
@@ -228,7 +245,7 @@ function AdminClients(props) {
                 </div>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Borrar cliente</Modal.Title>
+                        <Modal.Title>Advertencia!</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>Está seguro que quieres borrar este cliente?</Modal.Body>
                     <Modal.Footer>
@@ -238,6 +255,34 @@ function AdminClients(props) {
                         <Button variant="danger" onClick={() => {
                             handleClose()
                             deleteRegister(selectId)
+                        }}>
+                            Si
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showTomarseElDia} onHide={handleCloseTomarseElDia}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Advertencia!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Está seguro que quieres tomarte este día?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseTomarseElDia}>
+                            No
+                        </Button>
+                        <Button variant="danger" onClick={() => {
+                            let freeHours = []
+                            axios.get(`/hoursFree/${fechaActual}`)
+                                .then(r => {
+                                    r.data.forEach(horario => {
+                                        axios.post(`/ocuparHorario/${fechaActual}/${horario}`)
+                                            .then(r => console.log(r.data.msg))
+                                    })
+                                })
+                                .then(() => {
+                                    setRender(!render)
+                                    registroOk('Dia ocupado')
+                                })
+                            handleCloseTomarseElDia()
                         }}>
                             Si
                         </Button>
@@ -263,12 +308,13 @@ function AdminClients(props) {
                             onChange={date => {
                                 const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
                                 setDateToShow(date)
+                                handleCloseCanva()
                                 // filtrarPorFecha(fechaelegida)
                                 return setFechaActual(fechaelegida)
                             }}
                         />}
                         <div className="botonesFiltrado">
-                            <Button onClick={filtrarPorFechaExacta}>Buscar</Button>
+                            {/* <Button onClick={filtrarPorFechaExacta}>Buscar</Button> */}
                             {
                                 mostrar ?
                                     <Button onClick={mostrarTodos}>Mostrar Todos</Button>

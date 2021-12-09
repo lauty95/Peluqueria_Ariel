@@ -97,9 +97,9 @@ select {
     padding: 5px 7px 5px 7px;
 }
 
-.botonesFiltrado{
+.botonesFiltrado {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .botones {
@@ -110,11 +110,11 @@ select {
     width: 280px !important;
 }
 
-.marginTop{
+.marginTop {
     margin-top: 20px;
 }
 
-.mensajeWsp{
+.mensajeWsp {
     margin-bottom: 15px;
 }
 
@@ -123,16 +123,17 @@ select {
     height: 100px;
 }
 
-.precio{
+.precio {
     width: 100%;
     margin-bottom: 15px;
 }
 
-.ocupado{
+.ocupado {
     background: rgb(103, 103, 109);
-    
+
 }
-.cliente{
+
+.cliente {
     background: rgb(80, 119, 80);
 }
 
@@ -148,15 +149,30 @@ select {
     margin-bottom: 20px;
 }
 
-.grafico{ 
+.grafico {
     display: inline-table;
     height: 100px;
     width: 100%;
 }
 
-.loading{
+.loading {
     margin-top: 100px;
     background-color: #e3e3e3;
+}
+
+.espera {
+    background-color: #e3e3e3;
+}
+
+.espera p {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 @media (max-width: 600px) {
@@ -165,3 +181,4 @@ select {
         margin-right: auto;
     }
 }
+
