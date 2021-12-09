@@ -270,7 +270,6 @@ function AdminClients(props) {
                             No
                         </Button>
                         <Button variant="danger" onClick={() => {
-                            let freeHours = []
                             axios.get(`/hoursFree/${fechaActual}`)
                                 .then(r => {
                                     r.data.forEach(horario => {

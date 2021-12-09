@@ -138,6 +138,7 @@ function FormReservas() {
                   autoOk
                   className={classes.inputFecha}
                   minDate={fechaActual}
+                  shouldDisableDate={date => date.getDay() === 0}
                   format="dd/MM/yyyy"
                   value={dateToShow}
                   InputAdornmentProps={{ position: "start" }}
