@@ -103,7 +103,7 @@ router.post("/newClient", async (req, res) => {
         if (whatsappOn) {
             client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
                 if (isRegistered) {
-                    client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+                    client.sendMessage(`549${telefono}@c.us`, `*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${dia} a las ${turno} Hs. Te espero ${nombre}.`);
                 }
             })
         }

@@ -26,15 +26,24 @@ function FormReservas() {
   const [data, setData] = useState(initialState)
   const [horas, setHoras] = useState([])
   const [registrado, setRegistrado] = useState(false)
-  const [show, setShow] = useState(false);
   const [pickerStatus, setPickerStatus] = useState(false)
   const [mensajeDeEspera, setMensajeDeEspera] = useState(false)
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
 
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
+
+  const registroOk = () => {
+    setRegistrado(true)
+    enqueueSnackbar('Registramos su reserva con éxito!', {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'left',
+      },
+      TransitionComponent: Slide,
+      variant: 'success',
+    })
+  }
 
   const registroFail = (msg) => {
     if (!msg) {
@@ -86,7 +95,7 @@ function FormReservas() {
       if (data.telefono.length === 10) {
         setRegistrado(true)
         axios.post('/newClient', data)
-          .then(() => handleShow())
+          .then(() => registroOk())
           .catch(() => registroFail())
       } else {
         registroFail("Revise su número de whatsapp, debe tener 10 dítigots")
@@ -181,23 +190,6 @@ function FormReservas() {
           }
         </div>
       }
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Registrado!</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Tu reserva para {
-          Number(data.dia.split("-")[0]) === Number(initialDate.split("-")[0]) ? 'hoy ' :
-            Number(data.dia.split("-")[0]) === Number(initialDate.split("-")[0]) + 1 ? 'mañana ' :
-              'el dia ' + data.dia.replaceAll("-", "/") + " "
-        }
-          en el turno de las {data.turno} hs fue registrado con éxito
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
-            Ok
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   )
 }
