@@ -3,7 +3,9 @@ const express = require('express');
 const router = express();
 const { Op } = require('sequelize');
 const qrcode = require('qrcode-terminal')
-const { Client } = require('whatsapp-web.js')
+const { Client, MessageMedia } = require('whatsapp-web.js');
+const fs = require('fs')
+const SESSION_FILE_PATH = './src/session.json'
 
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
@@ -11,32 +13,79 @@ const horarios = [
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
-// const client = new Client({
-//     puppeteer: {
-//         args: [
-//             '--no-sandbox',
-//         ],
-//     }
-// });
-// let codigoQr
-// let whatsappOn = false
-// client.on('qr', qr => codigoQr = qr);
-// client.on('ready', () => {
-//     whatsappOn = true
-//     console.log('Client is ready!');
-// });
-// client.initialize();
 
-// router.get("/whatsapp", async (req, res) => {
-//     res.json(codigoQr)
-// })
+let client
+let sessionData;
+let whatsappOn = false
+
+const withSession = () => {
+    // Si exsite cargamos el archivo con las credenciales
+    console.log('Validando session con Whatsapp...')
+    sessionData = require('./../session.json');
+    client = new Client({
+        session: sessionData
+    });
+
+    client.on('ready', () => {
+        console.log('Client is ready!');
+        whatsappOn = true
+    });
+
+    client.on('auth_failure', () => {
+        console.log('** Error de autentificacion vuelve a generar el QRCODE (Borrar el archivo session.json) **');
+    })
+
+    client.initialize();
+}
+
+router.get("/whatsapp", async (req, res) => {
+    if (fs.existsSync(SESSION_FILE_PATH)) {
+        withSession()
+        res.send({ qr: 'sesion iniciada' })
+    } else {
+        console.log('No hay sesion guardada')
+        client = new Client({
+            puppeteer: {
+                args: [
+                    '--no-sandbox',
+                ],
+            }
+        });
+
+        let c = 0
+        client.on('qr', qr => {
+            if (c === 0) {
+                res.send({ qr: qr })
+                c++
+            }
+        })
+
+        client.on('authenticated', (session) => {
+            //guardamos credenciales de session
+            sessionData = session
+            fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
+                if (err) {
+                    console.log(err)
+                }
+            })
+        })
+
+        client.on('ready', () => {
+            console.log('Client is ready!');
+            whatsappOn = true
+        });
+
+        client.initialize()
+
+    }
+})
 
 
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
     const mili = new Date().getMilliseconds().toString()
     const id = Math.floor(telefono / mili)
-    console.log(id)
+
     try {
         await Cliente.create({
             id: id,
@@ -50,17 +99,17 @@ router.post("/newClient", async (req, res) => {
         console.log(e)
         res.status(500).send(e);
     }
-    // try {
-    //     if (whatsappOn) {
-    //         client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
-    //             if (isRegistered) {
-    //                 client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
-    //             }
-    //         })
-    //     }
-    // } catch (e) {
-    //     console.log('wsp error connection')
-    // }
+    try {
+        if (whatsappOn) {
+            client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
+                if (isRegistered) {
+                    client.sendMessage(`549${telefono}@c.us`, `Hola! Registramos tu reserva el día ${dia} a las ${turno} hs. Te espero!`);
+                }
+            })
+        }
+    } catch (e) {
+        console.log('wsp error connection')
+    }
 })
 
 router.get("/hoursFree/:dia", async (req, res) => {
