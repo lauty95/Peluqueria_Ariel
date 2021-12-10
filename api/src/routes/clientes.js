@@ -17,6 +17,7 @@ const horarios = [
 let client
 let sessionData;
 let whatsappOn = false
+let codigo
 
 const withSession = () => {
     // Si exsite cargamos el archivo con las credenciales
@@ -38,52 +39,51 @@ const withSession = () => {
     client.initialize();
 }
 
+const withOutSession = () => {
+    console.log('No hay sesion guardada')
+    client = new Client({
+        puppeteer: {
+            args: [
+                '--no-sandbox',
+            ],
+        }
+    });
+
+    let c = 0
+    client.on('qr', qr => {
+        console.log(qr)
+        codigo = { qr }
+    })
+
+    client.on('authenticated', (session) => {
+        //guardamos credenciales de session
+        sessionData = session
+        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
+            if (err) {
+                console.log(err)
+            }
+        })
+    })
+
+    client.on('ready', () => {
+        console.log('Client is ready!');
+        whatsappOn = true
+    });
+
+    client.initialize()
+}
+
+(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+
 router.get("/whatsapp", async (req, res) => {
-    if (fs.existsSync(SESSION_FILE_PATH)) {
-        withSession()
-        res.send({ qr: 'sesion iniciada' })
-    } else {
-        console.log('No hay sesion guardada')
-        client = new Client({
-            puppeteer: {
-                args: [
-                    '--no-sandbox',
-                ],
-            }
-        });
-
-        let c = 0
-        client.on('qr', qr => {
-            if (c === 0) {
-                res.send({ qr: qr })
-                c++
-            }
-        })
-
-        client.on('authenticated', (session) => {
-            //guardamos credenciales de session
-            sessionData = session
-            fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
-                if (err) {
-                    console.log(err)
-                }
-            })
-        })
-
-        client.on('ready', () => {
-            console.log('Client is ready!');
-            whatsappOn = true
-        });
-
-        client.initialize()
-
-    }
+    whatsappOn ?
+        res.status(200).send({ qr: 'sesion iniciada' })
+        :
+        res.status(200).send(codigo)
 })
-
 
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
-    const mili = new Date().getMilliseconds().toString()
     try {
         await Cliente.create({
             id: uuid4(),

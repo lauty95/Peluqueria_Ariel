@@ -59,7 +59,7 @@ function AdminClients(props) {
         })
     }
 
-console.log(registrados)
+    console.log(registrados)
     useEffect(() => {
         // const dia = Number(fechaActual.split("-")[0])
         // let manana = fechaActual.split("-")
@@ -179,6 +179,10 @@ console.log(registrados)
     const llamarQr = () => {
         axios.get('/whatsapp')
             .then(r => setearQr(r.data))
+    }
+
+    const desvincular = () => {
+        axios.post('/destroyWsp')
     }
     return (
         registrados.length > 0 ?
@@ -351,7 +355,7 @@ console.log(registrados)
 
                             {
                                 qr.qr === 'sesion iniciada' ?
-                                    <span>Sesión iniciada</span>
+                                    <span onClick={desvincular}>Sesión iniciada</span>
                                     :
                                     qr.qr.length > 0 ?
                                         <QRCode value={qr.qr} />
@@ -364,10 +368,16 @@ console.log(registrados)
                 </Offcanvas>
             </div>
             :
-            <div class="d-flex justify-content-center loading">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
+            <div className='espera'>
+                <div class="d-flex justify-content-center loading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
+                {
+                    registrados &&
+                    <p>Esto está demorando, pero aguarda un momentito y te conectaremos</p>
+                }
             </div>
     )
 }
