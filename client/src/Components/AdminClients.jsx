@@ -59,19 +59,19 @@ function AdminClients(props) {
         })
     }
 
-
+console.log(registrados)
     useEffect(() => {
-        const dia = Number(fechaActual.split("-")[0])
-        let manana = fechaActual.split("-")
-        manana[0] = (dia + 1).toString()
-        const hora = new Date().getHours()
-        if (hora >= 20) {
-            axios.get(`/getClients/${manana.join().replaceAll(",", "-")}`)
-                .then(r => setRegistrados(r.data))
-        } else {
-            axios.get(`/getClients/${fechaActual}`)
-                .then(r => setRegistrados(r.data))
-        }
+        // const dia = Number(fechaActual.split("-")[0])
+        // let manana = fechaActual.split("-")
+        // manana[0] = (dia + 1).toString()
+        // const hora = new Date().getHours()
+        // if (hora >= 20) {
+        //     axios.get(`/getClients/${manana.join().replaceAll(",", "-")}`)
+        //         .then(r => setRegistrados(r.data))
+        // } else {
+        // }
+        axios.get(`/getClients/${fechaActual}`)
+            .then(r => setRegistrados(r.data))
         axios.get(`/mensajeWsp`)
             .then(r => setMensaje(r.data.mensaje))
         axios.get(`/precio`)
