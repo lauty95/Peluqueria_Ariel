@@ -92,10 +92,11 @@ function FormReservas() {
       return state;
     })
   }
+  console.log(data.turno)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (data.turno !== '') {
+    if (data.turno !== '' && data.turno !== 'sin horario para hoy') {
       if (data.telefono.length === 10) {
         setRegistrado(true)
         axios.post('/newClient', data)
