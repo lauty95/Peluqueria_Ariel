@@ -181,9 +181,6 @@ function AdminClients(props) {
             .then(r => setearQr(r.data))
     }
 
-    const desvincular = () => {
-        axios.post('/destroyWsp')
-    }
     return (
         registrados.length > 0 ?
             <div>
@@ -355,7 +352,7 @@ function AdminClients(props) {
 
                             {
                                 qr.qr === 'sesion iniciada' ?
-                                    <span onClick={desvincular}>Sesión iniciada</span>
+                                    <span>Sesión iniciada</span>
                                     :
                                     qr.qr.length > 0 ?
                                         <QRCode value={qr.qr} />
