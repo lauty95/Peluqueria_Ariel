@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const Cliente = sequelize.define('cliente', {
-    id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    id: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
     nombre: { type: DataTypes.STRING, allowNull: false },
     telefono: { type: DataTypes.TEXT, allowNull: false },
     dia: { type: DataTypes.STRING, allowNull: false },

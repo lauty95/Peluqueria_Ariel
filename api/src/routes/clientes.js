@@ -2,7 +2,7 @@ const { Cliente, Mensaje, Precio } = require('../db');
 const express = require('express');
 const router = express();
 const { Op } = require('sequelize');
-const qrcode = require('qrcode-terminal')
+const uuid4 = require('uuid4')
 const { Client, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs')
 const SESSION_FILE_PATH = './src/session.json'
@@ -84,11 +84,9 @@ router.get("/whatsapp", async (req, res) => {
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
     const mili = new Date().getMilliseconds().toString()
-    const id = Math.floor(telefono / mili)
-
     try {
         await Cliente.create({
-            id: id,
+            id: uuid4(),
             nombre,
             telefono,
             dia,
@@ -206,14 +204,9 @@ router.get('/adminHours/:fecha', async (req, res) => {
 
 router.post('/ocuparHorario/:dia/:horario', async (req, res) => {
     const { dia, horario } = req.params
-
-    const turnoSplited = horario.split(':')
-    const diaSplited = dia.split('-')
-    const id = Number(diaSplited[0]) + Number(diaSplited[1]) + Number(diaSplited[2]) + Number(turnoSplited[0]) + Number(turnoSplited[1]) + Math.floor(Math.random() * 1000)
-
     try {
         await Cliente.create({
-            id: id,
+            id: uuid4(),
             nombre: '',
             telefono: '',
             dia: dia,
