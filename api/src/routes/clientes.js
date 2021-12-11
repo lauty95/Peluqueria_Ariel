@@ -24,6 +24,11 @@ const withSession = () => {
     console.log('Validando session con Whatsapp...')
     sessionData = require('./../session.json');
     client = new Client({
+        puppeteer: {
+            args: [
+                '--no-sandbox',
+            ],
+        },
         session: sessionData
     });
 
