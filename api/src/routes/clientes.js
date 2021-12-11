@@ -73,13 +73,11 @@ const withOutSession = () => {
     client.initialize()
 }
 
-(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+
 
 router.get("/whatsapp", async (req, res) => {
-    whatsappOn ?
-        res.status(200).send({ qr: 'sesion iniciada' })
-        :
-        res.status(200).send(codigo)
+    (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+    res.status(200).send({ qr: 'sesion iniciada' })
 })
 
 router.post("/newClient", async (req, res) => {
