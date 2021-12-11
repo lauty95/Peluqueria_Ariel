@@ -54,9 +54,7 @@ const withOutSession = () => {
         }
     });
 
-    let c = 0
     client.on('qr', qr => {
-        console.log(qr)
         codigo = { qr }
     })
 
@@ -79,9 +77,9 @@ const withOutSession = () => {
 }
 
 
+(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
 router.get("/whatsapp", async (req, res) => {
-    (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
     res.status(200).send({ qr: 'sesion iniciada' })
 })
 
