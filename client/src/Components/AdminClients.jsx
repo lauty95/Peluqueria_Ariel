@@ -346,21 +346,6 @@ function AdminClients(props) {
                             </div>
                         </div>
 
-                        <hr />
-                        <div className='qr'>
-                            <Button onClick={llamarQr}>Mostrar Qr</Button>
-
-                            {
-                                qr.qr === 'sesion iniciada' ?
-                                    <span>Sesión iniciada</span>
-                                    :
-                                    qr.qr.length > 0 ?
-                                        <QRCode value={qr.qr} />
-                                        :
-                                        <></>
-                            }
-                        </div>
-
                     </Offcanvas.Body>
                 </Offcanvas>
             </div>

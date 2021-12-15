@@ -2,6 +2,7 @@ const { Cliente, Mensaje, Precio } = require('../db');
 const express = require('express');
 const router = express();
 const { Op } = require('sequelize');
+var qrcode = require('qrcode-terminal');
 const uuid4 = require('uuid4')
 const { Client, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs')
@@ -55,6 +56,7 @@ const withOutSession = () => {
     });
 
     client.on('qr', qr => {
+        qrcode.generate(qr, { small: true });
         codigo = { qr }
     })
 
