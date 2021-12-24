@@ -83,8 +83,15 @@ function FormReservas() {
           }
         }
       })
-      .catch(() => setMensajeDeEspera(true))
+      .catch(() => waitForApi())
   }, [dateToShow, data.dia, initialDate])
+
+  const waitForApi = () => {
+    setMensajeDeEspera(true)
+    setTimeout(function(){
+      window.location.reload(1);
+   }, 12000);
+  }
 
   const handleChange = (e) => {
     setData((prevData) => {
@@ -92,11 +99,10 @@ function FormReservas() {
       return state;
     })
   }
-  console.log(data.turno)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (data.turno !== '' && data.turno !== 'sin horario para hoy') {
+    if (data.turno !== '' && data.turno !== 'sin horario para hoy' && data.turno !== 'Elige el horario') {
       if (data.telefono.length === 10) {
         setRegistrado(true)
         axios.post('/newClient', data)

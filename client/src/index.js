@@ -12,7 +12,7 @@ import { SnackbarProvider } from 'notistack';
 
 dotenv.config();
 
-axios.defaults.baseURL = process.env.REACT_APP_API || "http://localhost:3001";
+axios.defaults.baseURL = process.env.REACT_APP_API || "http://192.168.0.254:3001";
 
 ReactDOM.render(
   <React.StrictMode>
