@@ -198,10 +198,7 @@ function FormReservas() {
           {
             <>
               <p>Esto puede demorar porque está alojado en un servidor gratuito</p>
-              <p>Pero aguarda un momentito y te conectaremos</p>
-              {setTimeout(function () {
-                window.location.reload(1);
-              }, 10000)}
+              <p>Si demora en conectarte recarga la página</p>
             </>
           }
         </div>
