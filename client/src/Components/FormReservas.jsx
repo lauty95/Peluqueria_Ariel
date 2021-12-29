@@ -83,14 +83,14 @@ function FormReservas() {
           }
         }
       })
-      .catch(() => waitForApi())
+      .catch(() => console.log('error al conectar con el server'))
   }, [dateToShow, data.dia, initialDate])
 
   const waitForApi = () => {
     setMensajeDeEspera(true)
-    setTimeout(function(){
+    setTimeout(function () {
       window.location.reload(1);
-   }, 12000);
+    }, 12000);
   }
 
   const handleChange = (e) => {
@@ -196,8 +196,13 @@ function FormReservas() {
             </div>
           </div>
           {
-            mensajeDeEspera &&
-            <p>Esto está demorando, pero aguarda un momentito y te conectaremos</p>
+            <>
+              <p>Esto puede demorar porque está alojado en un servidor gratuito</p>
+              <p>Pero aguarda un momentito y te conectaremos</p>
+              {setTimeout(function () {
+                window.location.reload(1);
+              }, 10000)}
+            </>
           }
         </div>
       }
