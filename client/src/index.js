@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios'
 import dotenv from 'dotenv'
 import { SnackbarProvider } from 'notistack';
+import 'core-js/es/map';
 
 dotenv.config();
 
