@@ -5,7 +5,9 @@ import axios from 'axios'
 import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
-import { Button, Modal } from 'react-bootstrap';
+import * as actionCreators from '../actions'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux';
 
 const useStyle = makeStyles({
   inputFecha: {
@@ -27,7 +29,6 @@ function FormReservas() {
   const [horas, setHoras] = useState([])
   const [registrado, setRegistrado] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
-  const [mensajeDeEspera, setMensajeDeEspera] = useState(false)
 
 
   const classes = useStyle();
@@ -85,13 +86,6 @@ function FormReservas() {
       })
       .catch(() => console.log('error al conectar con el server'))
   }, [dateToShow, data.dia, initialDate])
-
-  const waitForApi = () => {
-    setMensajeDeEspera(true)
-    setTimeout(function () {
-      window.location.reload(1);
-    }, 12000);
-  }
 
   const handleChange = (e) => {
     setData((prevData) => {
@@ -207,4 +201,14 @@ function FormReservas() {
   )
 }
 
-export default FormReservas
+const mapStateToProps = function (state) {
+  return {
+      page: state.page,
+  }
+}
+
+const mapDispatchToProps = function (dispatch) {
+  return bindActionCreators(actionCreators, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormReservas);

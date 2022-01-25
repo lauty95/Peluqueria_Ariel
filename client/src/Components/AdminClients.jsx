@@ -6,7 +6,6 @@ import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
 import { Button, Modal, Table, Offcanvas } from 'react-bootstrap';
-import QRCode from "react-qr-code";
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -33,7 +32,6 @@ function AdminClients(props) {
     const [precio, setPrecio] = useState();
     const [mostrar, setMostrar] = useState(true)
     const [pickerStatus, setPickerStatus] = useState(false)
-    const [qr, setearQr] = useState({ qr: '' })
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -58,18 +56,8 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-
-    console.log(registrados)
+    
     useEffect(() => {
-        // const dia = Number(fechaActual.split("-")[0])
-        // let manana = fechaActual.split("-")
-        // manana[0] = (dia + 1).toString()
-        // const hora = new Date().getHours()
-        // if (hora >= 20) {
-        //     axios.get(`/getClients/${manana.join().replaceAll(",", "-")}`)
-        //         .then(r => setRegistrados(r.data))
-        // } else {
-        // }
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
         axios.get(`/mensajeWsp`)
@@ -174,11 +162,6 @@ function AdminClients(props) {
     const reset = () => {
         setRender(!render)
         setMostrar(!mostrar)
-    }
-
-    const llamarQr = () => {
-        axios.get('/whatsapp')
-            .then(r => setearQr(r.data))
     }
 
     return (
