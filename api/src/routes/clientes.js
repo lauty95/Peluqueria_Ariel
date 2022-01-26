@@ -4,7 +4,7 @@ const router = express();
 const { Op } = require('sequelize');
 var qrcode = require('qrcode-terminal');
 const uuid4 = require('uuid4')
-const { Client, MessageMedia } = require('whatsapp-web.js');
+const { Client } = require('whatsapp-web.js');
 const fs = require('fs')
 const SESSION_FILE_PATH = './src/session.json'
 
@@ -15,71 +15,71 @@ const horarios = [
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
 
-// let client
-// let sessionData;
-// let whatsappOn = false
-// let codigo
+let client
+let sessionData;
+let whatsappOn = false
+let codigo
 
-// const withSession = () => {
-//     // Si exsite cargamos el archivo con las credenciales
-//     console.log('Validando session con Whatsapp...')
-//     sessionData = require('./../session.json');
-//     client = new Client({
-//         puppeteer: {
-//             args: [
-//                 '--no-sandbox',
-//             ],
-//         },
-//         session: sessionData
-//     });
+const withSession = () => {
+    // Si exsite cargamos el archivo con las credenciales
+    console.log('Validando session con Whatsapp...')
+    sessionData = require('./../session.json');
+    client = new Client({
+        puppeteer: {
+            args: [
+                '--no-sandbox',
+            ],
+        },
+        session: sessionData
+    });
 
-//     client.on('ready', () => {
-//         console.log('Client is ready!');
-//         whatsappOn = true
-//     });
+    client.on('ready', () => {
+        console.log('Client is ready!');
+        whatsappOn = true
+    });
 
-//     client.on('auth_failure', () => {
-//         console.log('** Error de autentificacion vuelve a generar el QRCODE (Borrar el archivo session.json) **');
-//     })
+    client.on('auth_failure', () => {
+        console.log('** Error de autentificacion vuelve a generar el QRCODE (Borrar el archivo session.json) **');
+    })
 
-//     client.initialize();
-// }
+    client.initialize();
+}
 
-// const withOutSession = () => {
-//     console.log('No hay sesion guardada')
-//     client = new Client({
-//         puppeteer: {
-//             args: [
-//                 '--no-sandbox',
-//             ],
-//         }
-//     });
+const withOutSession = () => {
+    console.log('No hay sesion guardada')
+    client = new Client({
+        puppeteer: {
+            args: [
+                '--no-sandbox',
+            ],
+        }
+    });
 
-//     client.on('qr', qr => {
-//         qrcode.generate(qr, { small: true });
-//         codigo = { qr }
-//     })
+    client.on('qr', qr => {
+        qrcode.generate(qr, { small: true });
+        codigo = { qr }
+    })
 
-//     client.on('authenticated', (session) => {
-//         //guardamos credenciales de session
-//         sessionData = session
-//         fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
-//             if (err) {
-//                 console.log(err)
-//             }
-//         })
-//     })
+    client.on('authenticated', (session) => {
+        //guardamos credenciales de session
+        sessionData = session
+        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
+            if (err) {
+                console.log(err)
+            }
+        })
+    })
 
-//     client.on('ready', () => {
-//         console.log('Client is ready!');
-//         whatsappOn = true
-//     });
+    client.on('ready', () => {
+        console.log('Client is ready!');
+        whatsappOn = true
+    });
 
-//     client.initialize()
-// }
+    client.initialize()
+}
 
 
-// (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
 router.get("/whatsapp", async (req, res) => {
     res.status(200).send({ qr: 'sesion iniciada' })
