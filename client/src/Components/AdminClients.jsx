@@ -6,6 +6,9 @@ import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
 import { Button, Modal, Table, Offcanvas } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actionCreators from '../actions'
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -56,7 +59,7 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-    
+    console.log(props);
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
@@ -69,19 +72,10 @@ function AdminClients(props) {
     const handleSubmitWrite = (e, tel, turno) => {
         e.preventDefault()
         if (mensaje) {
-            window.open(
-                `https://wa.me/549${tel}?text=${mensaje.replace("HORA", `*${turno} hs*`)}`,
-                '_blank'
-            );
+            props.contactMe(tel, mensaje.replace("HORA", `*${turno} hs*`))
         } else {
             registroOk("Debes setear un mensaje antes de enviar algo")
         }
-    }
-    const handleSubmitProfile = (tel) => {
-        window.open(
-            `https://wa.me/549${tel}`,
-            '_blank'
-        );
     }
 
     const deleteRegister = (id) => {
@@ -128,10 +122,6 @@ function AdminClients(props) {
             .catch(() => {
                 registroOk('Hubo un error')
             })
-    }
-
-    const setearMensajeWsp = (e) => {
-        setMensaje(e.target.value)
     }
 
     const guardarMensaje = () => {
@@ -206,7 +196,7 @@ function AdminClients(props) {
                                                 :
                                                 user.ocupado === 'Cliente' ?
                                                     <tr className="cliente">
-                                                        <td onClick={() => handleSubmitProfile(user.telefono)}><b>{user.nombre}</b></td>
+                                                        <td onClick={() => props.contactMe(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
                                                         <td>{<img name={user.telefono} onClick={(e) => handleSubmitWrite(e, user.telefono, user.turno, user.dia)} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
                                                         <td>{<button name={user.id} onClick={(e) => {
@@ -316,7 +306,7 @@ function AdminClients(props) {
 
                         <hr />
 
-                        <textarea value={mensaje} name="mensajewsp" className="mensajeWsp" onChange={e => setearMensajeWsp(e)} />
+                        <textarea value={mensaje} name="mensajewsp" className="mensajeWsp" onChange={e => setMensaje(e.target.value)} />
                         <div className="botonesFiltrado">
                             <Button onClick={guardarMensaje}>Setear Mensaje</Button>
                         </div>
@@ -334,9 +324,9 @@ function AdminClients(props) {
             </div>
             :
             <div className='espera'>
-                <div class="d-flex justify-content-center loading">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                <div className="d-flex justify-content-center loading">
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 {
@@ -347,4 +337,15 @@ function AdminClients(props) {
     )
 }
 
-export default AdminClients
+
+const mapStateToProps = function (state) {
+    return {
+        freeHours: state.freeHours,
+    }
+}
+
+const mapDispatchToProps = function (dispatch) {
+    return bindActionCreators(actionCreators, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdminClients);

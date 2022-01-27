@@ -1,1 +1,2 @@
 export const GET_FREE_HOURS = 'GET_FREE_HOURS' 
+export const GET_HOURS_TOODAY = 'GET_HOURS_TOODAY' 
