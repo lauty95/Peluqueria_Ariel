@@ -100,7 +100,11 @@ router.post("/newClient", async (req, res) => {
         if (whatsappOn) {
             client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
                 if (isRegistered) {
-                    client.sendMessage(`549${telefono}@c.us`, `*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${dia} a las ${turno} Hs. Te espero ${nombre}.`);
+                    client.sendMessage(`549${telefono}@c.us`,
+`👋 Hola ${nombre}.
+Este es un mensaje automático de mi app del turnero.
+Te escribo porque registraste un turno para el día ${dia} a las ${turno} Hs.
+_Gracias por probar mi app!._`);
                 }
             })
         }
