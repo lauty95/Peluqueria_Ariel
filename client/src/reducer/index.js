@@ -1,7 +1,8 @@
-import { GET_FREE_HOURS, GET_HOURS_TOODAY } from "../actions/types";
+import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE } from "../actions/types";
 
 const initialState = {
     freeHours: [],
+    wspMessage: '',
 }
 
 function reducer(state = initialState, { type, payload }) {
@@ -33,6 +34,16 @@ function reducer(state = initialState, { type, payload }) {
             return {
                 ...state,
                 freeHours: payload
+            }
+        case GET_WSP_MSG: 
+            return {
+                ...state,
+                wspMessage: payload
+            }
+        case EDIT_WSP_MESSAGE:
+            return {
+                ...state,
+                wspMessage: payload
             }
         default:
             return state

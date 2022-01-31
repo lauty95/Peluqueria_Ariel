@@ -22,3 +22,7 @@ export const contactMe = (phoneNumber, message, name) => {
         }
     }
 }
+
+export const sendMessage = (mensaje, tel, turno) => {
+    contactMe(tel, mensaje.replace("HORA", `*${turno} hs*`))
+}
