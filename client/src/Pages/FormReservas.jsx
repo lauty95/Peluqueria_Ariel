@@ -24,7 +24,6 @@ function FormReservas(props) {
   const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
   const fechaActual = new Date()
   const initialState = { nombre: '', telefono: '', dia: initialDate, turno: '' }
-
   const [dateToShow, setDateToShow] = useState(fechaActual)
   const [data, setData] = useState(initialState)
   const [registrado, setRegistrado] = useState(false)
