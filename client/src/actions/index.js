@@ -20,7 +20,7 @@ export const getHoursToday = (data) => {
 }
 
 export const saveWspMessage = (mensaje) => {
-    return function (dispatch) {
+    return function () {
         axios.post(`/setearMensaje`, { mensaje })
     }
 }

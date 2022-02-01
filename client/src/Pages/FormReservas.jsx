@@ -29,7 +29,6 @@ function FormReservas(props) {
   const [registrado, setRegistrado] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
 
-
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -89,7 +88,7 @@ function FormReservas(props) {
       registroFail("Debes elegir un horario")
     }
   }
-
+  
   return (
     <>
       {props.freeHours.length !== 0 ?

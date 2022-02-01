@@ -33,7 +33,7 @@ function reducer(state = initialState, { type, payload }) {
             }
             return {
                 ...state,
-                freeHours: payload
+                freeHours: result
             }
         case GET_WSP_MSG: 
             return {
