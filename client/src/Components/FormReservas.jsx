@@ -24,10 +24,9 @@ function FormReservas() {
 
   const [dateToShow, setDateToShow] = useState(fechaActual)
   const [data, setData] = useState(initialState)
-  const [horas, setHoras] = useState([])
+  const [horas, setHoras] = useState(['sin horario para hoy'])
   const [registrado, setRegistrado] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
-  const [mensajeDeEspera, setMensajeDeEspera] = useState(false)
 
 
   const classes = useStyle();
@@ -59,6 +58,8 @@ function FormReservas() {
     })
   }
 
+  console.log(horas);
+
   useEffect(() => {
     axios.get(`/hoursFree/${data.dia}`)
       .then(res => {
@@ -85,13 +86,6 @@ function FormReservas() {
       })
       .catch(() => console.log('error al conectar con el server'))
   }, [dateToShow, data.dia, initialDate])
-
-  const waitForApi = () => {
-    setMensajeDeEspera(true)
-    setTimeout(function () {
-      window.location.reload(1);
-    }, 12000);
-  }
 
   const handleChange = (e) => {
     setData((prevData) => {
