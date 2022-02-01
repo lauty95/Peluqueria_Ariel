@@ -29,7 +29,7 @@
     "sequelize": "^6.3.5",
     "uuid": "^8.3.2",
     "uuid4": "^2.0.2",
-    "whatsapp-web.js": "^1.15.3"
+    "whatsapp-web.js": "^1.15.4"
   },
   "devDependencies": {
     "supertest-session": "^4.1.0",
