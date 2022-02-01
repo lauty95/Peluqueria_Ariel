@@ -24,5 +24,11 @@ export const contactMe = (phoneNumber, message, name) => {
 }
 
 export const sendMessage = (mensaje, tel, turno) => {
-    contactMe(tel, mensaje.replace("HORA", `*${turno} hs*`))
+    return function () {
+        let msg = mensaje.replace("HORA", `*${turno} hs*`)
+        window.open(
+            `https://wa.me/549${tel}?text=${msg}`,
+            '_blank'
+        );
+    }
 }

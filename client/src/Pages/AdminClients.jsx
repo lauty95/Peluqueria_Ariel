@@ -187,7 +187,17 @@ function AdminClients(props) {
                                                     <tr className="cliente">
                                                         <td onClick={() => props.contactMe(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
-                                                        <td>{<img name={user.telefono} onClick={() => props.mwspMessage ? props.sendMessage(props.wspMessage, user.telefono, user.turno) : registroOk("Debes setear un mensaje antes de enviar algo")} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
+                                                        <td>{
+                                                            <img
+                                                                name={user.telefono}
+                                                                onClick={() =>
+                                                                    props.wspMessage ?
+                                                                        props.sendMessage(props.wspMessage, user.telefono, user.turno)
+                                                                        :
+                                                                        registroOk("Debes setear un mensaje antes de enviar algo")}
+                                                                className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
+                                                            />
+                                                        }</td>
                                                         <td>{<button name={user.id} onClick={(e) => {
                                                             e.preventDefault()
                                                             setSelectId(user.id)
