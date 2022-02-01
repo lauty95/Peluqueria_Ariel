@@ -59,7 +59,7 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-    console.log(props);
+    
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
