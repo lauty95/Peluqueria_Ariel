@@ -5,7 +5,10 @@ import axios from 'axios'
 import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
 import imgWsp from './../assets/wsp.png'
-import { Button, Modal } from 'react-bootstrap';
+import * as actionCreators from '../actions'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux';
+import Spinner from '../Components/Spinner';
 
 const useStyle = makeStyles({
   inputFecha: {
@@ -17,14 +20,12 @@ const useStyle = makeStyles({
   }
 })
 
-function FormReservas() {
+function FormReservas(props) {
   const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
   const fechaActual = new Date()
   const initialState = { nombre: '', telefono: '', dia: initialDate, turno: '' }
-
   const [dateToShow, setDateToShow] = useState(fechaActual)
   const [data, setData] = useState(initialState)
-  const [horas, setHoras] = useState(['sin horario para hoy'])
   const [registrado, setRegistrado] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
 
@@ -58,33 +59,12 @@ function FormReservas() {
     })
   }
 
-  console.log(horas);
-
   useEffect(() => {
-    axios.get(`/hoursFree/${data.dia}`)
-      .then(res => {
-        if (res.data.length === 0) {
-          setHoras(['sin horario para hoy'])
-        } else {
-          if (data.dia === initialDate) {
-            const filtroHora = res.data.filter(el => {
-              if (Number(el.split(":")[0]) === new Date().getHours()) {
-                return Number(el.split(":")[1]) >= new Date().getMinutes()
-              } else {
-                return (Number(el.split(":")[0]) > new Date().getHours())
-              }
-            })
-            if (filtroHora.length === 0) {
-              setHoras(['sin horario para hoy'])
-            } else {
-              setHoras(filtroHora)
-            }
-          } else {
-            setHoras(res.data)
-          }
-        }
-      })
-      .catch(() => console.log('error al conectar con el server'))
+    if (data.dia === initialDate) {
+      props.getHoursToday(data.dia)
+    } else {
+      props.getFreeHours(data.dia)
+    }
   }, [dateToShow, data.dia, initialDate])
 
   const handleChange = (e) => {
@@ -110,24 +90,9 @@ function FormReservas() {
     }
   }
 
-  const contactar = (e) => {
-    e.preventDefault()
-    if (data.nombre) {
-      window.open(
-        `https://wa.me/5493492322020?text=Hola Ariel! Soy ${data.nombre}, me estoy contactando desde tu sitio web`,
-        '_blank'
-      );
-    } else {
-      window.open(
-        `https://wa.me/5493492322020?text=Hola Ariel! Me contacto desde tu sitio web`,
-        '_blank'
-      );
-    }
-  }
-
   return (
     <>
-      {horas.length !== 0 ?
+      {props.freeHours.length !== 0 ?
         <div className="contenedorFormulario">
           <center><h3>Haz tu reserva!</h3></center>
           <form className="formularioReservas" onSubmit={handleSubmit}>
@@ -171,34 +136,32 @@ function FormReservas() {
               <select disabled={registrado} className="form-input select-filter" name="turno" onChange={handleChange} required>
                 <option>Elige el horario</option>
                 {
-                  horas.length === 0 ?
+                  props.freeHours.length === 0 ?
                     <option key="loading">Cargando horas...</option>
                     :
-                    horas.map(el => <option key={el} name={el}>{el}</option>)
+                    props.freeHours.map(el => <option key={el} name={el}>{el}</option>)
                 }
               </select>
             </div>
             <button disabled={registrado} className="reservar" type="submit">Reservar</button>
           </form>
-          <button className="reservar" onClick={contactar}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
+          <button className="reservar" onClick={() => props.contactMe(null, null, data.nombre)}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
         </div>
         :
-        <div className='espera'>
-          <div class="d-flex justify-content-center loading">
-            <div class="spinner-border" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
-          {
-            <>
-              <p>Esto puede demorar porque está alojado en un servidor gratuito</p>
-              <p>Si demora en conectarte recarga la página</p>
-            </>
-          }
-        </div>
+        <Spinner />
       }
     </>
   )
 }
 
-export default FormReservas
+const mapStateToProps = function (state) {
+  return {
+    freeHours: state.freeHours,
+  }
+}
+
+const mapDispatchToProps = function (dispatch) {
+  return bindActionCreators(actionCreators, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormReservas);

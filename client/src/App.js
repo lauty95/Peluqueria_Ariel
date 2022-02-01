@@ -1,7 +1,7 @@
 import { Route } from 'react-router-dom';
-import AdminClients from './Components/AdminClients';
-import FormReservas from './Components/FormReservas';
-import Graphics from './Components/Graphics';
+import AdminClients from './Pages/AdminClients';
+import FormReservas from './Pages/FormReservas';
+import Graphics from './Pages/Graphics';
 import './style.css'
 
 function App() {

@@ -8,7 +8,9 @@ import esLocale from 'date-fns/locale/es'
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios'
 import dotenv from 'dotenv'
+import store from './store'
 import { SnackbarProvider } from 'notistack';
+import { Provider } from 'react-redux'
 import 'core-js/es/map';
 
 dotenv.config();
@@ -18,11 +20,13 @@ axios.defaults.baseURL = process.env.REACT_APP_API || "http://192.168.0.140:3001
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <SnackbarProvider maxSnack={1}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
-          <App />
-        </MuiPickersUtilsProvider>
-      </SnackbarProvider>
+      <Provider store={store}>
+        <SnackbarProvider maxSnack={1}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
+            <App />
+          </MuiPickersUtilsProvider>
+        </SnackbarProvider>
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
