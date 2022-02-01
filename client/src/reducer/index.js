@@ -1,7 +1,7 @@
 import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE } from "../actions/types";
 
 const initialState = {
-    freeHours: [],
+    freeHours: ['sin horario para hoy'],
     wspMessage: '',
 }
 
