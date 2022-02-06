@@ -233,9 +233,7 @@ router.post('/ocuparHorario/:dia/:horario', async (req, res) => {
     try {
         await Cliente.create({
             id: uuid4(),
-            nombre: '',
-            telefono: '',
-            dia: dia,
+            dia,
             turno: horario,
             ocupado: "Ocupado"
         });

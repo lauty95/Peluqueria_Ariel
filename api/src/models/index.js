@@ -13,13 +13,13 @@ module.exports = (sequelize) => {
 
   const Cliente = sequelize.define('cliente', {
     id: { type: DataTypes.STRING, allowNull: false, primaryKey: true },
-    nombre: { type: DataTypes.STRING, allowNull: false },
-    telefono: { type: DataTypes.TEXT, allowNull: false },
-    tienePromo: { type: DataTypes.BOOLEAN, allowNull: false },
+    nombre: { type: DataTypes.STRING, allowNull: true },
+    telefono: { type: DataTypes.TEXT, allowNull: true },
+    tienePromo: { type: DataTypes.BOOLEAN, allowNull: true },
     dia: { type: DataTypes.STRING, allowNull: false },
-    diaPromo: { type: DataTypes.STRING, allowNull: false },
+    diaPromo: { type: DataTypes.STRING, allowNull: true },
     turno: { type: DataTypes.STRING, allowNull: false },
-    idCliente: { type: DataTypes.INTEGER, allowNull: false },
+    idCliente: { type: DataTypes.INTEGER, allowNull: true },
     ocupado: { type: DataTypes.STRING, defaultValue: "Cliente", allowNull: false },
   },
     {
