@@ -59,7 +59,7 @@ function FormReservas(props) {
       variant: 'error',
     })
   }
-  console.log(props.user);
+
   useEffect(() => {
     if (props.user.dia === initialDate) {
       props.getHoursToday(props.user.dia)
@@ -75,7 +75,6 @@ function FormReservas(props) {
   const registrarCliente = () => {
     let conservaPromo = props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo)
     let data = { ...props.user, tienePromo: conservaPromo }
-    console.log(data);
     axios.post('/newClient', data)
       .then(() => registroOk())
       .catch(() => registroFail())
@@ -105,8 +104,6 @@ function FormReservas(props) {
     props.getUser(props.user.id)
     setLogin(true)
   }
-
-  console.log();
 
   return (
     <>

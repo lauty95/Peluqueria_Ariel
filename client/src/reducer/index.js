@@ -5,7 +5,7 @@ const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).r
 const initialState = {
     freeHours: ['sin horario para hoy'],
     wspMessage: '',
-    user: { id: '', nombre: '', telefono: '', tienePromo: false, newUser: false, dia: initialDate },
+    user: { id: '', nombre: '', telefono: '', tienePromo: false, newUser: false, dia: initialDate, turno: '' },
 }
 
 function reducer(state = initialState, { type, payload }) {
