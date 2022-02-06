@@ -3,7 +3,7 @@ import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, FIND_U
 const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
 
 const initialState = {
-    freeHours: [],
+    freeHours: ['sin horario para hoy'],
     wspMessage: '',
     user: { id: '', nombre: '', telefono: '', tienePromo: false, newUser: false, dia: initialDate },
 }

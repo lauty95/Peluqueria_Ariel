@@ -4,7 +4,7 @@ const router = express();
 const { Op } = require('sequelize');
 var qrcode = require('qrcode-terminal');
 const uuid4 = require('uuid4')
-const { Client, MessageMedia } = require('whatsapp-web.js');
+const { Client } = require('whatsapp-web.js');
 const fs = require('fs')
 const SESSION_FILE_PATH = './src/session.json'
 
