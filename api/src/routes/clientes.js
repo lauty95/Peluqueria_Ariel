@@ -78,18 +78,45 @@ const withOutSession = () => {
     client.initialize()
 }
 
-
 (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
+function acomodarFecha(date) {
+    let dia = date.split('-')[0]
+    let mes = date.split('-')[1] - 1
+    let anio = "" + 20 + date.split('-')[2]
+    let nuevaFecha = new Date(anio, mes, dia)
+    return nuevaFecha
+}
+
 router.post("/newClient", async (req, res) => {
-    var { nombre, telefono, dia, turno } = req.body
+    var { dia } = req.body
+    const { id, nombre, telefono, turno } = req.body
+
+    let calculoFecha = acomodarFecha(dia)
+    calculoFecha.setDate(calculoFecha.getDate() + 20)
+    const fecha = calculoFecha.getDate()
+    const mes = calculoFecha.getMonth() + 1
+    const anio = calculoFecha.getFullYear()
+    const diaPromo = fecha + "-" + mes + "-" + anio
+
     try {
+        const cantidadRegistros = await Cliente.findAll({
+            where: {
+                idCliente: id
+            }
+        })
+
+        let boolPromo = cantidadRegistros.length % 2 === 0
+
         await Cliente.create({
             id: uuid4(),
             nombre,
             telefono,
+            tienePromo: boolPromo,
             dia,
-            turno
+            diaPromo: boolPromo ? diaPromo : '',
+            turno,
+            idCliente: id,
         });
         res.status(200).send({ msg: 'created' })
     } catch (e) {

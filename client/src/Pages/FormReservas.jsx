@@ -9,6 +9,9 @@ import * as actionCreators from '../actions'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import Spinner from '../Components/Spinner';
+import Login from '../Components/Login';
+import MessagePromo from '../Components/MessagePromo'
+import MessageBooked from '../Components/MessageBooked';
 
 const useStyle = makeStyles({
   inputFecha: {
@@ -23,11 +26,10 @@ const useStyle = makeStyles({
 function FormReservas(props) {
   const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
   const fechaActual = new Date()
-  const initialState = { nombre: '', telefono: '', dia: initialDate, turno: '' }
   const [dateToShow, setDateToShow] = useState(fechaActual)
-  const [data, setData] = useState(initialState)
   const [registrado, setRegistrado] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
+  const [login, setLogin] = useState(false)
 
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
@@ -57,30 +59,40 @@ function FormReservas(props) {
       variant: 'error',
     })
   }
-
+  console.log(props.user);
   useEffect(() => {
-    if (data.dia === initialDate) {
-      props.getHoursToday(data.dia)
+    if (props.user.dia === initialDate) {
+      props.getHoursToday(props.user.dia)
     } else {
-      props.getFreeHours(data.dia)
+      props.getFreeHours(props.user.dia)
     }
-  }, [dateToShow, data.dia, initialDate])
+  }, [dateToShow, props.user])
 
   const handleChange = (e) => {
-    setData((prevData) => {
-      const state = { ...prevData, [e.target.name]: e.target.value }
-      return state;
-    })
+    props.saveInfo('HANDLE_CHANGE', { nombre: e.target.name, data: e.target.value })
+  }
+
+  const registrarCliente = () => {
+    let conservaPromo = props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo)
+    let data = { ...props.user, tienePromo: conservaPromo }
+    console.log(data);
+    axios.post('/newClient', data)
+      .then(() => registroOk())
+      .catch(() => registroFail())
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (data.turno !== '' && data.turno !== 'sin horario para hoy' && data.turno !== 'Elige el horario') {
-      if (data.telefono.length === 10) {
+    if (props.user.turno !== '' && props.user.turno !== 'sin horario para hoy' && props.user.turno !== 'Elige el horario') {
+      if (props.user.telefono.length === 10) {
         setRegistrado(true)
-        axios.post('/newClient', data)
-          .then(() => registroOk())
-          .catch(() => registroFail())
+        if (props.user.newUser) {
+          axios.post('/newUser', props.user)
+            .then(() => registrarCliente())
+            .catch(() => console.log('faló crear un nuevo usuario'))
+        } else {
+          registrarCliente()
+        }
       } else {
         registroFail("Revise su número de whatsapp, debe tener 10 dítigots")
       }
@@ -88,66 +100,84 @@ function FormReservas(props) {
       registroFail("Debes elegir un horario")
     }
   }
-  
+
+  const handleLogin = () => {
+    props.getUser(props.user.id)
+    setLogin(true)
+  }
+
+  console.log();
+
   return (
     <>
       {props.freeHours.length !== 0 ?
         <div className="contenedorFormulario">
           <center><h3>Haz tu reserva!</h3></center>
-          <form className="formularioReservas" onSubmit={handleSubmit}>
-            <div className="filaFormulario">
-              <span>NOMBRE</span>
-              <input disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
-            </div>
-            <div className="filaFormulario">
-              <span>CELULAR (con característica | sin 0, sin 15)</span>
-              <input disabled={registrado} type="tel" name="telefono" placeholder="3492505050" onChange={handleChange} required />
-            </div>
-            <div className="filaFormulario">
-              <span>ELIGE EL DÍA</span>
-              {
-                <KeyboardDatePicker
-                  onClick={() => setPickerStatus(true)}
-                  onClose={() => setPickerStatus(false)}
-                  open={pickerStatus}
-                  InputProps={{ readOnly: true }}
-                  disabled={registrado}
-                  name='dia'
-                  autoOk
-                  className={classes.inputFecha}
-                  minDate={fechaActual}
-                  shouldDisableDate={date => date.getDay() === 0}
-                  format="dd/MM/yyyy"
-                  value={dateToShow}
-                  InputAdornmentProps={{ position: "start" }}
-                  onChange={date => {
-                    const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
-                    setData((currentData) => {
-                      setDateToShow(date)
-                      return { ...currentData, dia: fechaelegida }
-                    })
-                  }}
-                />
-              }
-            </div>
-            <div className="filaFormulario">
-              <span>ELIGE EL HORARIO</span>
-              <select disabled={registrado} className="form-input select-filter" name="turno" onChange={handleChange} required>
-                <option>Elige el horario</option>
+          <Login value={props.user.id} onClick={handleLogin} onChange={handleChange} className={login ? 'visible' : ''} />
+          {props.user.ultimoRegistro && !props.compararFecha(props.user.ultimoRegistro, initialDate) && login ?
+            <>
+              <MessageBooked fecha={props.user.ultimoRegistro} nombre={props.user.nombre} />
+              <button className="boton" onClick={() => props.contactMe(null, null, props.user.nombre)}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
+            </>
+            :
+            <>
+              <form className={`formularioReservas ${!login && 'visible'}`} onSubmit={handleSubmit}>
+                <div className="filaFormulario">
+                  <span>NOMBRE</span>
+                  <input value={props.user.nombre} disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
+                </div>
+                <div className="filaFormulario">
+                  <span>CELULAR (con característica | sin 0, sin 15)</span>
+                  <input value={props.user.telefono} disabled={registrado} type="tel" name="telefono" placeholder="3492505050" onChange={handleChange} required />
+                </div>
+                <div className="filaFormulario">
+                  <span>ELIGE EL DÍA</span>
+                  {
+                    <KeyboardDatePicker
+                      onClick={() => setPickerStatus(true)}
+                      onClose={() => setPickerStatus(false)}
+                      open={pickerStatus}
+                      InputProps={{ readOnly: true }}
+                      disabled={registrado}
+                      name='dia'
+                      autoOk
+                      className={classes.inputFecha}
+                      minDate={fechaActual}
+                      shouldDisableDate={date => date.getDay() === 0}
+                      format="dd/MM/yyyy"
+                      value={dateToShow}
+                      InputAdornmentProps={{ position: "start" }}
+                      onChange={date => {
+                        const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                        props.saveInfo('HANDLE_CHANGE', { nombre: 'dia', data: fechaelegida })
+                        setDateToShow(date)
+                      }}
+                    />
+                  }
+                </div>
+                <div className="filaFormulario">
+                  <span>ELIGE EL HORARIO</span>
+                  <select disabled={registrado} className="form-input select-filter" name="turno" onChange={handleChange} required>
+                    <option>Elige el horario</option>
+                    {
+                      props.freeHours.length === 0 ?
+                        <option key="loading">Cargando horas...</option>
+                        :
+                        props.freeHours.map(el => <option key={el} name={el}>{el}</option>)
+                    }
+                  </select>
+                </div>
                 {
-                  props.freeHours.length === 0 ?
-                    <option key="loading">Cargando horas...</option>
-                    :
-                    props.freeHours.map(el => <option key={el} name={el}>{el}</option>)
+                  props.user.tienePromo && props.compararFecha(initialDate, props.user.diaPromo) &&
+                  <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} />
                 }
-              </select>
-            </div>
-            <button disabled={registrado} className="reservar" type="submit">Reservar</button>
-          </form>
-          <button className="reservar" onClick={() => props.contactMe(null, null, data.nombre)}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
+                <button disabled={registrado} className="boton" type="submit">Reservar</button>
+              </form>
+            </>}
         </div>
         :
         <Spinner />
+
       }
     </>
   )
@@ -156,6 +186,7 @@ function FormReservas(props) {
 const mapStateToProps = function (state) {
   return {
     freeHours: state.freeHours,
+    user: state.user
   }
 }
 

@@ -59,7 +59,6 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-    console.log(props);
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
@@ -184,7 +183,7 @@ function AdminClients(props) {
                                                 </tr>
                                                 :
                                                 user.ocupado === 'Cliente' ?
-                                                    <tr className="cliente">
+                                                    <tr className={!user.tienePromo ? "promo" : "cliente"}>
                                                         <td onClick={() => props.contactMe(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
                                                         <td>{
@@ -323,7 +322,6 @@ function AdminClients(props) {
             <Spinner />
     )
 }
-
 
 const mapStateToProps = function (state) {
     return {
