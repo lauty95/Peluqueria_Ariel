@@ -50,10 +50,10 @@ let entries = Object.entries(sequelize.models);
 let capsEntries = entries.map((entry) => [entry[0][0].toUpperCase() + entry[0].slice(1), entry[1]]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Cliente, Usuario } = sequelize.models;
+// const { Cliente, Usuario } = sequelize.models;
 
-Cliente.belongsToMany(Usuario, { through: 'historial_turnos' })
-Usuario.belongsToMany(Cliente, { through: 'historial_turnos', foreignKey: 'idCliente' })
+// Cliente.belongsToMany(Usuario, { through: 'historial_turnos' })
+// Usuario.belongsToMany(Cliente, { through: 'historial_turnos', foreignKey: 'idCliente' })
 
 module.exports = {
   ...sequelize.models,

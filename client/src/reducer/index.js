@@ -1,8 +1,11 @@
-import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE } from "../actions/types";
+import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, FIND_USER, HANDLE_CHANGE } from "../actions/types";
+
+const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
 
 const initialState = {
     freeHours: [],
     wspMessage: '',
+    user: { id: '', nombre: '', telefono: '', tienePromo: false, newUser: false, dia: initialDate },
 }
 
 function reducer(state = initialState, { type, payload }) {
@@ -35,7 +38,7 @@ function reducer(state = initialState, { type, payload }) {
                 ...state,
                 freeHours: result
             }
-        case GET_WSP_MSG: 
+        case GET_WSP_MSG:
             return {
                 ...state,
                 wspMessage: payload
@@ -44,6 +47,26 @@ function reducer(state = initialState, { type, payload }) {
             return {
                 ...state,
                 wspMessage: payload
+            }
+        case FIND_USER:
+            let user = {
+                ...state.user,
+                nombre: payload.nombre,
+                telefono: payload.telefono,
+                tienePromo: payload.tienePromo,
+                diaPromo: payload.diaPromo,
+                ultimoRegistro: payload.ultimoRegistro
+            }
+            if (!user.nombre) user.newUser = true
+            return {
+                ...state,
+                user,
+                logeado: true
+            }
+        case HANDLE_CHANGE:
+            return {
+                ...state,
+                user: { ...state.user, [payload.nombre]: payload.data }
             }
         default:
             return state

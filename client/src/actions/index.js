@@ -1,7 +1,16 @@
 import axios from "axios";
-import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, SAVE_WSP_MESSAGE } from "./types";
+import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, FIND_USER } from "./types";
 
 export { contactMe, sendMessage } from './wspActions'
+export { compararFecha } from './fechas'
+
+export const getUser = (id) => {
+    return function (dispatch) {
+        axios.get(`/usuario/${id}`)
+            .then(res => dispatch(saveInfo(FIND_USER, res.data)))
+            .catch(() => console.log('error al conectar con el server'))
+    }
+}
 
 export const getFreeHours = (data) => {
     return function (dispatch) {
@@ -39,8 +48,7 @@ export const editWspMessage = (data) => {
     }
 }
 
-
-const saveInfo = (type, data) => {
+export const saveInfo = (type, data) => {
     return {
         type: type,
         payload: data

@@ -58,11 +58,11 @@ select {
     margin-bottom: 10px;
 }
 
-.reservar {
+.boton {
     width: 100%;
     color: #fff;
     background-color: #3F51B5;
-    margin-top: 25px;
+    margin-top: 15px;
     padding: 15px 38px;
     font-size: 16px;
     line-height: 20px;
@@ -73,7 +73,7 @@ select {
     border-width: 0;
 }
 
-.reservar:hover {
+.boton:hover {
     background-color: #716286;
 }
 
@@ -148,6 +148,10 @@ select {
     background: rgb(80, 119, 80);
 }
 
+.promo {
+    background: rgb(13, 146, 255);
+}
+
 .graphic {
     background-color: #e3e3e3;
     display: flex;
@@ -184,6 +188,28 @@ select {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.visible {
+    display: none;
+}
+
+.filaFormulario p {
+    text-align: center;
+    font-weight: bold;
+    font-size: medium;
+}
+
+.havePromo {
+    color: green;
+}
+
+.doesntHavePromo {
+    color: red;
+}
+
+.booked p {
+    font-size: x-large;
 }
 
 @media (max-width: 600px) {

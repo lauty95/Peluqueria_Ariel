@@ -59,7 +59,6 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-    
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
@@ -184,10 +183,20 @@ function AdminClients(props) {
                                                 </tr>
                                                 :
                                                 user.ocupado === 'Cliente' ?
-                                                    <tr className="cliente">
+                                                    <tr className={!user.tienePromo ? "promo" : "cliente"}>
                                                         <td onClick={() => props.contactMe(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
-                                                        <td>{<img name={user.telefono} onClick={() => props.mwspMessage ? props.sendMessage(props.wspMessage, user.telefono, user.turno) : registroOk("Debes setear un mensaje antes de enviar algo")} className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />}</td>
+                                                        <td>{
+                                                            <img
+                                                                name={user.telefono}
+                                                                onClick={() =>
+                                                                    props.wspMessage ?
+                                                                        props.sendMessage(props.wspMessage, user.telefono, user.turno)
+                                                                        :
+                                                                        registroOk("Debes setear un mensaje antes de enviar algo")}
+                                                                className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
+                                                            />
+                                                        }</td>
                                                         <td>{<button name={user.id} onClick={(e) => {
                                                             e.preventDefault()
                                                             setSelectId(user.id)
@@ -313,7 +322,6 @@ function AdminClients(props) {
             <Spinner />
     )
 }
-
 
 const mapStateToProps = function (state) {
     return {
