@@ -84,7 +84,7 @@ function FormReservas(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (props.user.turno !== '' && props.user.turno !== 'sin horario para hoy' && props.user.turno !== 'Elige el horario') {
+    if (props.user.turno && props.user.turno !== '' && props.user.turno !== 'sin horario para hoy' && props.user.turno !== 'Elige el horario') {
       if (props.user.telefono.length === 10) {
         setRegistrado(true)
         if (props.user.newUser) {
@@ -116,6 +116,9 @@ function FormReservas(props) {
           <div className="contenedorFormulario">
             <center><h3>Haz tu reserva!</h3></center>
             <Login value={props.user.id} onClick={handleLogin} onChange={handleChange} className={login ? 'visible' : ''} />
+          </div>
+          <Footer precio={props.price} className={login ? 'visible' : 'footer'} />
+          <div className="contenedorFormulario">
             {props.user.ultimoRegistro && !props.compararFecha(props.user.ultimoRegistro, initialDate) && login ?
               <>
                 <MessageBooked fecha={props.user.ultimoRegistro} nombre={props.user.nombre} hora={props.user.turno} precio={props.price} />
@@ -177,11 +180,9 @@ function FormReservas(props) {
                 </form>
               </>}
           </div>
-          <Footer precio={props.price} />
         </>
         :
         <Spinner />
-
       }
     </>
   )

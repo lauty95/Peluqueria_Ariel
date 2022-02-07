@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Footer = ({ precio }) => {
+const Footer = ({ precio, className }) => {
     return (
-        <div className='footer'>
+        <div className={className}>
             <h2>Nuestro precio actual es ${precio}</h2>
         </div>
     );
