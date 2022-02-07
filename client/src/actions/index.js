@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, SAVE_WSP_MESSAGE } from "./types";
+import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE } from "./types";
 
 export { contactMe, sendMessage } from './wspActions'
 
