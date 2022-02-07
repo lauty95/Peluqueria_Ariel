@@ -21,17 +21,23 @@ router.post('/newUser', async (req, res) => {
 
 router.get('/usuario/:id', async (req, res) => {
     const { id } = req.params
-    const registros = await Cliente.findAll({
-        where: {
-            idCliente: id
-        }
-    })
-
-    let registrosOrdenados = registros.reduce((a, b) => mayorFecha(a.diaPromo, b.diaPromo), 0)
-    let ultimoRegistro = registros.reduce((a, b) => mayorFecha(a.dia, b.dia), 0)
-
-    let boolPromo = registros.length % 2 === 1
     try {
+        const registros = await Cliente.findAll({
+            where: {
+                idCliente: id
+            }
+        })
+
+        let registrosOrdenados = registros.reduce((a, b) => mayorFecha(a.diaPromo, b.diaPromo), 0)
+        let ultimoRegistro = registros.reduce((a, b) => mayorFecha(a.dia, b.dia), 0)
+        let ultimoTurno = await Cliente.findAll({
+            where: {
+                idCliente: id,
+                dia: ultimoRegistro
+            }
+        })
+        
+        let boolPromo = registros.length % 2 === 1
         const user = await Usuario.findAll({
             where: {
                 id
@@ -43,7 +49,8 @@ router.get('/usuario/:id', async (req, res) => {
             telefono: user[0].telefono,
             tienePromo: boolPromo,
             diaPromo: registrosOrdenados === 0 ? '' : registrosOrdenados,
-            ultimoRegistro
+            ultimoRegistro,
+            turno: ultimoTurno[0].turno,
         }
         res.json(resultado)
     } catch (err) {
