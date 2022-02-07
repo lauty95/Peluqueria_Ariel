@@ -21,22 +21,28 @@ router.post('/newUser', async (req, res) => {
 
 router.get('/usuario/:id', async (req, res) => {
     const { id } = req.params
+    let registros = []
+    let registrosOrdenados = []
+    let ultimoTurno = []
     try {
-        const registros = await Cliente.findAll({
+        registros = await Cliente.findAll({
             where: {
                 idCliente: id
             }
         })
 
-        let registrosOrdenados = registros.reduce((a, b) => mayorFecha(a.diaPromo, b.diaPromo), 0)
-        let ultimoRegistro = registros.reduce((a, b) => mayorFecha(a.dia, b.dia), 0)
-        let ultimoTurno = await Cliente.findAll({
+        registrosOrdenados = registros.reduce((a, b) => mayorFecha(a.diaPromo, b.diaPromo), 0)
+        ultimoRegistro = registros.reduce((a, b) => mayorFecha(a.dia, b.dia), 0)
+        ultimoTurno = await Cliente.findAll({
             where: {
                 idCliente: id,
                 dia: ultimoRegistro
             }
         })
-        
+    } catch {
+        console.log('No se registran clientes con la id ', id)
+    }
+    try {
         let boolPromo = registros.length % 2 === 1
         const user = await Usuario.findAll({
             where: {
@@ -48,9 +54,9 @@ router.get('/usuario/:id', async (req, res) => {
             nombre: user[0].nombre,
             telefono: user[0].telefono,
             tienePromo: boolPromo,
-            diaPromo: registrosOrdenados === 0 ? '' : registrosOrdenados,
+            diaPromo: registrosOrdenados.length > 0 ? registrosOrdenados === 0 ? '' : registrosOrdenados : '',
             ultimoRegistro,
-            turno: ultimoTurno[0].turno,
+            turno: ultimoTurno.length > 0 ? ultimoTurno[0].turno : '',
         }
         res.json(resultado)
     } catch (err) {
