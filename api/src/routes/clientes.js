@@ -93,7 +93,7 @@ router.post("/newClient", async (req, res) => {
     const { id, nombre, telefono, turno } = req.body
 
     let calculoFecha = acomodarFecha(dia)
-    calculoFecha.setDate(calculoFecha.getDate() + 20)
+    calculoFecha.setDate(calculoFecha.getDate() + 22)
     const fecha = calculoFecha.getDate()
     const mes = calculoFecha.getMonth() + 1
     const anio = calculoFecha.getFullYear()
