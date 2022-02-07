@@ -12,6 +12,7 @@ import Spinner from '../Components/Spinner';
 import Login from '../Components/Login';
 import MessagePromo from '../Components/MessagePromo'
 import MessageBooked from '../Components/MessageBooked';
+import Footer from '../Components/Footer';
 
 const useStyle = makeStyles({
   inputFecha: {
@@ -66,6 +67,7 @@ function FormReservas(props) {
     } else {
       props.getFreeHours(props.user.dia)
     }
+    props.getPrice()
   }, [dateToShow, props.user])
 
   const handleChange = (e) => {
@@ -105,73 +107,78 @@ function FormReservas(props) {
     setLogin(true)
   }
 
+  console.log(props.user);
+
   return (
     <>
       {props.freeHours.length !== 0 ?
-        <div className="contenedorFormulario">
-          <center><h3>Haz tu reserva!</h3></center>
-          <Login value={props.user.id} onClick={handleLogin} onChange={handleChange} className={login ? 'visible' : ''} />
-          {props.user.ultimoRegistro && !props.compararFecha(props.user.ultimoRegistro, initialDate) && login ?
-            <>
-              <MessageBooked fecha={props.user.ultimoRegistro} nombre={props.user.nombre} />
-              <button className="boton" onClick={() => props.contactMe(null, null, props.user.nombre)}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
-            </>
-            :
-            <>
-              <form className={`formularioReservas ${!login && 'visible'}`} onSubmit={handleSubmit}>
-                <div className="filaFormulario">
-                  <span>NOMBRE</span>
-                  <input value={props.user.nombre} disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
-                </div>
-                <div className="filaFormulario">
-                  <span>CELULAR (con característica | sin 0, sin 15)</span>
-                  <input value={props.user.telefono} disabled={registrado} type="tel" name="telefono" placeholder="3492505050" onChange={handleChange} required />
-                </div>
-                <div className="filaFormulario">
-                  <span>ELIGE EL DÍA</span>
-                  {
-                    <KeyboardDatePicker
-                      onClick={() => setPickerStatus(true)}
-                      onClose={() => setPickerStatus(false)}
-                      open={pickerStatus}
-                      InputProps={{ readOnly: true }}
-                      disabled={registrado}
-                      name='dia'
-                      autoOk
-                      className={classes.inputFecha}
-                      minDate={fechaActual}
-                      shouldDisableDate={date => date.getDay() === 0}
-                      format="dd/MM/yyyy"
-                      value={dateToShow}
-                      InputAdornmentProps={{ position: "start" }}
-                      onChange={date => {
-                        const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
-                        props.saveInfo('HANDLE_CHANGE', { nombre: 'dia', data: fechaelegida })
-                        setDateToShow(date)
-                      }}
-                    />
-                  }
-                </div>
-                <div className="filaFormulario">
-                  <span>ELIGE EL HORARIO</span>
-                  <select disabled={registrado} className="form-input select-filter" name="turno" onChange={handleChange} required>
-                    <option>Elige el horario</option>
+        <>
+          <div className="contenedorFormulario">
+            <center><h3>Haz tu reserva!</h3></center>
+            <Login value={props.user.id} onClick={handleLogin} onChange={handleChange} className={login ? 'visible' : ''} />
+            {props.user.ultimoRegistro && !props.compararFecha(props.user.ultimoRegistro, initialDate) && login ?
+              <>
+                <MessageBooked fecha={props.user.ultimoRegistro} nombre={props.user.nombre} hora={props.user.turno} precio={props.price} />
+                <button className="boton" onClick={() => props.contactMe(null, null, props.user.nombre)}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
+              </>
+              :
+              <>
+                <form className={`formularioReservas ${!login && 'visible'}`} onSubmit={handleSubmit}>
+                  <div className="filaFormulario">
+                    <span>NOMBRE</span>
+                    <input value={props.user.nombre} disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
+                  </div>
+                  <div className="filaFormulario">
+                    <span>CELULAR (con característica | sin 0, sin 15)</span>
+                    <input value={props.user.telefono} disabled={registrado} type="tel" name="telefono" placeholder="3492505050" onChange={handleChange} required />
+                  </div>
+                  <div className="filaFormulario">
+                    <span>ELIGE EL DÍA</span>
                     {
-                      props.freeHours.length === 0 ?
-                        <option key="loading">Cargando horas...</option>
-                        :
-                        props.freeHours.map(el => <option key={el} name={el}>{el}</option>)
+                      <KeyboardDatePicker
+                        onClick={() => setPickerStatus(true)}
+                        onClose={() => setPickerStatus(false)}
+                        open={pickerStatus}
+                        InputProps={{ readOnly: true }}
+                        disabled={registrado}
+                        name='dia'
+                        autoOk
+                        className={classes.inputFecha}
+                        // minDate={fechaActual}
+                        shouldDisableDate={date => date.getDay() === 0}
+                        format="dd/MM/yyyy"
+                        value={dateToShow}
+                        InputAdornmentProps={{ position: "start" }}
+                        onChange={date => {
+                          const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                          props.saveInfo('HANDLE_CHANGE', { nombre: 'dia', data: fechaelegida })
+                          setDateToShow(date)
+                        }}
+                      />
                     }
-                  </select>
-                </div>
-                {
-                  props.user.tienePromo && props.compararFecha(initialDate, props.user.diaPromo) &&
-                  <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} />
-                }
-                <button disabled={registrado} className="boton" type="submit">Reservar</button>
-              </form>
-            </>}
-        </div>
+                  </div>
+                  <div className="filaFormulario">
+                    <span>ELIGE EL HORARIO</span>
+                    <select disabled={registrado} className="form-input select-filter" name="turno" onChange={handleChange} required>
+                      <option>Elige el horario</option>
+                      {
+                        props.freeHours.length === 0 ?
+                          <option key="loading">Cargando horas...</option>
+                          :
+                          props.freeHours.map(el => <option key={el} name={el}>{el}</option>)
+                      }
+                    </select>
+                  </div>
+                  {
+                    props.user.tienePromo && props.compararFecha(initialDate, props.user.diaPromo) &&
+                    <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} />
+                  }
+                  <button disabled={registrado} className="boton" type="submit">Reservar</button>
+                </form>
+              </>}
+          </div>
+          <Footer precio={props.price} />
+        </>
         :
         <Spinner />
 
@@ -183,7 +190,8 @@ function FormReservas(props) {
 const mapStateToProps = function (state) {
   return {
     freeHours: state.freeHours,
-    user: state.user
+    user: state.user,
+    price: state.price
   }
 }
 

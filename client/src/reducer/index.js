@@ -1,4 +1,4 @@
-import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, FIND_USER, HANDLE_CHANGE } from "../actions/types";
+import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, FIND_USER, HANDLE_CHANGE, GET_PRICE } from "../actions/types";
 
 const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
 
@@ -6,6 +6,7 @@ const initialState = {
     freeHours: ['sin horario para hoy'],
     wspMessage: '',
     user: { id: '', nombre: '', telefono: '', tienePromo: false, newUser: false, dia: initialDate, turno: '' },
+    price: 0
 }
 
 function reducer(state = initialState, { type, payload }) {
@@ -55,7 +56,8 @@ function reducer(state = initialState, { type, payload }) {
                 telefono: payload.telefono,
                 tienePromo: payload.tienePromo,
                 diaPromo: payload.diaPromo,
-                ultimoRegistro: payload.ultimoRegistro
+                ultimoRegistro: payload.ultimoRegistro,
+                turno: payload.turno
             }
             if (!user.nombre) user.newUser = true
             return {
@@ -67,6 +69,11 @@ function reducer(state = initialState, { type, payload }) {
             return {
                 ...state,
                 user: { ...state.user, [payload.nombre]: payload.data }
+            }
+        case GET_PRICE:
+            return {
+                ...state,
+                price: payload
             }
         default:
             return state

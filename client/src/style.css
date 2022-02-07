@@ -197,7 +197,7 @@ select {
 .filaFormulario p {
     text-align: center;
     font-weight: bold;
-    font-size: medium;
+    font-size: 16px;
 }
 
 .havePromo {
@@ -209,7 +209,17 @@ select {
 }
 
 .booked p {
-    font-size: x-large;
+    font-size: 20px;
+}
+
+.footer {
+    width: 100%;
+    background-color: #3F51B5;
+    position: absolute;
+    bottom: 0;
+    color: white;
+    text-align: center;
+    padding-top: 5px;
 }
 
 @media (max-width: 600px) {
