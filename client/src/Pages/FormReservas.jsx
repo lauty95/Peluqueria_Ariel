@@ -107,8 +107,6 @@ function FormReservas(props) {
     setLogin(true)
   }
 
-  console.log(props.user)
-
   return (
     <>
       {props.freeHours.length !== 0 ?

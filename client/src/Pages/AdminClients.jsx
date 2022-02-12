@@ -285,7 +285,8 @@ function AdminClients(props) {
                             value={dateToShow}
                             InputAdornmentProps={{ position: "start" }}
                             onChange={date => {
-                                const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                                let fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                                fechaelegida = fechaelegida.split("-")[0] + "-" + fechaelegida.split("-")[1] + "-" + "20" + fechaelegida.split("-")[2]
                                 setDateToShow(date)
                                 handleCloseCanva()
                                 return setFechaActual(fechaelegida)
