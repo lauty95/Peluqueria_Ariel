@@ -43,13 +43,12 @@ router.get('/usuario/:id', async (req, res) => {
         console.log('No se registran clientes con la id ', id)
     }
     try {
-        let boolPromo = registros.length % 2 === 1
         const user = await Usuario.findAll({
             where: {
                 id
             }
         })
-        console.log(ultimoTurno[0].tienePromo)
+
         const resultado = {
             id: user[0].id,
             nombre: user[0].nombre,
@@ -60,6 +59,29 @@ router.get('/usuario/:id', async (req, res) => {
             turno: ultimoTurno.length > 0 ? ultimoTurno[0].turno : '',
         }
         res.json(resultado)
+    } catch (err) {
+        res.json(err)
+    }
+})
+
+router.get('/allUsers', async (req, res) => {
+    try {
+        const usuarios = await Usuario.findAll()
+        res.status(200).json(usuarios)
+    } catch (err) {
+        res.json(err)
+    }
+})
+
+router.post('/deleteUser/:id', async (req, res) => {
+    const { id } = req.params
+    try {
+        await Usuario.destroy({
+            where: {
+                id: id
+            }
+        })
+            .then(() => res.status(200).send({ msg: 'El usuario fué removido' }))
     } catch (err) {
         res.json(err)
     }
