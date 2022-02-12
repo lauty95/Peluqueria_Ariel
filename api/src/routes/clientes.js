@@ -15,9 +15,7 @@ const horarios = [
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
 
-const mayorFecha = (a, b) => a = a > b ? a : b
-
-let client
+export let client
 let sessionData;
 let whatsappOn = false
 
