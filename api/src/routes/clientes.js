@@ -15,10 +15,11 @@ const horarios = [
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
 
+const mayorFecha = (a, b) => a = a > b ? a : b
+
 let client
 let sessionData;
 let whatsappOn = false
-let codigo
 
 const withSession = () => {
     // Si exsite cargamos el archivo con las credenciales
@@ -55,10 +56,10 @@ const withOutSession = () => {
         }
     });
 
-    client.on('qr', qr => {
-        qrcode.generate(qr, { small: true });
-        codigo = { qr }
-    })
+    // client.on('qr', qr => {
+    //     qrcode.generate(qr, { small: true });
+    //     codigo = { qr }
+    // })
 
     client.on('authenticated', (session) => {
         //guardamos credenciales de session
@@ -88,17 +89,20 @@ function acomodarFecha(date) {
     return nuevaFecha
 }
 
-router.post("/newClient", async (req, res) => {
-    var { dia } = req.body
-    const { id, nombre, telefono, turno } = req.body
+function devolverFecha(date) {
+    const fecha = date.getDate()
+    const mes = date.getMonth() + 1
+    const anio = date.getFullYear()
+    return fecha + "-" + mes + "-" + anio
+}
 
+router.post("/newClient", async (req, res) => {
+    var { dia, tienePromo } = req.body
+    const { id, nombre, telefono, turno } = req.body
     let calculoFecha = acomodarFecha(dia)
     calculoFecha.setDate(calculoFecha.getDate() + 21)
-    const fecha = calculoFecha.getDate()
-    const mes = calculoFecha.getMonth() + 1
-    const anio = calculoFecha.getFullYear()
-    const diaPromo = fecha + "-" + mes + "-" + anio
-
+    const diaPromo = devolverFecha(calculoFecha)
+    const diaCompleto = devolverFecha(acomodarFecha(dia))
     try {
         const cantidadRegistros = await Cliente.findAll({
             where: {
@@ -106,15 +110,17 @@ router.post("/newClient", async (req, res) => {
             }
         })
 
-        let boolPromo = cantidadRegistros.length % 2 === 0
+        if (cantidadRegistros.length === 0) {
+            tienePromo = true
+        }
 
         await Cliente.create({
             id: uuid4(),
             nombre,
             telefono,
-            tienePromo: boolPromo,
-            dia,
-            diaPromo: boolPromo ? diaPromo : '',
+            tienePromo,
+            dia: diaCompleto,
+            diaPromo: diaPromo,
             turno,
             idCliente: id,
         });

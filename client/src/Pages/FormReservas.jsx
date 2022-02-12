@@ -75,7 +75,7 @@ function FormReservas(props) {
   }
 
   const registrarCliente = () => {
-    let conservaPromo = props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo)
+    let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
     let data = { ...props.user, tienePromo: conservaPromo }
     axios.post('/newClient', data)
       .then(() => registroOk())
@@ -107,7 +107,7 @@ function FormReservas(props) {
     setLogin(true)
   }
 
-  console.log(props.user);
+  console.log(props.user)
 
   return (
     <>
@@ -147,7 +147,7 @@ function FormReservas(props) {
                         name='dia'
                         autoOk
                         className={classes.inputFecha}
-                        minDate={fechaActual}
+                        // minDate={fechaActual}
                         shouldDisableDate={date => date.getDay() === 0}
                         format="dd/MM/yyyy"
                         value={dateToShow}
@@ -174,7 +174,7 @@ function FormReservas(props) {
                   </div>
                   {
                     props.user.tienePromo && props.compararFecha(initialDate, props.user.diaPromo) &&
-                    <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} />
+                    <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} precio={props.price} />
                   }
                   <button disabled={registrado} className="boton" type="submit">Reservar</button>
                 </form>

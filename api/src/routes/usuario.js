@@ -49,11 +49,12 @@ router.get('/usuario/:id', async (req, res) => {
                 id
             }
         })
+        console.log(ultimoTurno[0].tienePromo)
         const resultado = {
             id: user[0].id,
             nombre: user[0].nombre,
             telefono: user[0].telefono,
-            tienePromo: boolPromo,
+            tienePromo: ultimoTurno[0].tienePromo,
             diaPromo: registrosOrdenados.length > 0 ? registrosOrdenados === 0 ? '' : registrosOrdenados : '',
             ultimoRegistro,
             turno: ultimoTurno.length > 0 ? ultimoTurno[0].turno : '',
