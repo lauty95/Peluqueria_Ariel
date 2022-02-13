@@ -54,10 +54,10 @@ const withOutSession = () => {
         }
     });
 
-    // client.on('qr', qr => {
-    //     qrcode.generate(qr, { small: true });
-    //     codigo = { qr }
-    // })
+    client.on('qr', qr => {
+        qrcode.generate(qr, { small: true });
+        codigo = { qr }
+    })
 
     client.on('authenticated', (session) => {
         //guardamos credenciales de session
@@ -77,7 +77,7 @@ const withOutSession = () => {
     client.initialize()
 }
 
-// (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
