@@ -90,7 +90,7 @@ function FormReservas(props) {
         if (props.user.newUser) {
           axios.post('/newUser', props.user)
             .then(() => registrarCliente())
-            .catch(() => console.log('faló crear un nuevo usuario'))
+            .catch(() => console.log('falló crear un nuevo usuario'))
         } else {
           registrarCliente()
         }
@@ -145,7 +145,7 @@ function FormReservas(props) {
                         name='dia'
                         autoOk
                         className={classes.inputFecha}
-                        // minDate={fechaActual}
+                        minDate={fechaActual}
                         shouldDisableDate={date => date.getDay() === 0}
                         format="dd/MM/yyyy"
                         value={dateToShow}
