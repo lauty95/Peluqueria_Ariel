@@ -77,7 +77,7 @@ const withOutSession = () => {
     client.initialize()
 }
 
-(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+// (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
