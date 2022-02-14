@@ -25,7 +25,7 @@ const useStyle = makeStyles({
 })
 
 function FormReservas(props) {
-  let  initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+  let initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
   initialDate = initialDate.split("-")[0] + "-" + initialDate.split("-")[1] + "-20" + initialDate.split("-")[2]
   const fechaActual = new Date()
   const [dateToShow, setDateToShow] = useState(fechaActual)
@@ -63,7 +63,6 @@ function FormReservas(props) {
   }
 
   useEffect(() => {
-    console.log(props.user.dia)
     if (props.user.dia === initialDate) {
       props.getHoursToday(props.user.dia)
     } else {
@@ -78,7 +77,7 @@ function FormReservas(props) {
 
   const registrarCliente = () => {
     let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
-    let data = { ...props.user, tienePromo: conservaPromo }
+    let data = { ...props.user, tienePromo: conservaPromo, dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000) }
     axios.post('/newClient', data)
       .then(() => registroOk())
       .catch(() => registroFail())
