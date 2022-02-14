@@ -24,7 +24,8 @@ const useStyle = makeStyles({
 const diaActual = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
 
 function AdminClients(props) {
-    const [fechaActual, setFechaActual] = useState(new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-'))
+    let fecha = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+    const [fechaActual, setFechaActual] = useState(fecha.split("-")[0] + "-" + fecha.split("-")[1] + "-20" + fecha.split("-")[2])
     const [dateToShow, setDateToShow] = useState(new Date())
     const [registrados, setRegistrados] = useState([])
     const [render, setRender] = useState(false)
@@ -59,6 +60,7 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
+    console.log(fechaActual)
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
