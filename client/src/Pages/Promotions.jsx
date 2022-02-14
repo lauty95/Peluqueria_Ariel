@@ -5,6 +5,8 @@ import { Button, Table } from 'react-bootstrap'
 const Promotions = (props) => {
     const [cantidadDias, setCantidadDias] = useState(3)
     const [usuarios, setUsuarios] = useState(null)
+    const [enviando, setEnviando] = useState(false)
+    const [enviado, setEnviado] = useState(false)
 
     useEffect(() => {
         buscarUsuarios()
@@ -17,12 +19,17 @@ const Promotions = (props) => {
     }
 
     const enviarMensajes = () => {
+        setEnviando(true)
         axios.post('/enviarPromo', usuarios)
-            .then(() => console.log('mensajes enviados'))
-            .catch(() => console.log('mensajes NO enviados'))
+            .then(() => {
+                setEnviando(false)
+                setEnviado(true)
+            })
+            .catch(() => {
+                setEnviando(false)
+                setEnviado(true)
+            })
     }
-
-    console.log(usuarios)
 
     return (
         <div className="promotion">
@@ -54,8 +61,16 @@ const Promotions = (props) => {
                     )}
                 </tbody>
             </Table>
-            <Button variant="info" onClick={enviarMensajes}>
-                Enviar Aviso
+            <Button disabled={enviado} variant="info" onClick={enviarMensajes}>
+                {
+                    enviado ?
+                        "Mensajes enviados"
+                        :
+                        enviando ?
+                            <div className="spinner-border" role="status"></div>
+                            :
+                            "Enviar Aviso"
+                }
             </Button>
         </div>
     )
