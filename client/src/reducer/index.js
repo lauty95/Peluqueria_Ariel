@@ -1,6 +1,7 @@
 import { GET_FREE_HOURS, GET_HOURS_TOODAY, GET_WSP_MSG, EDIT_WSP_MESSAGE, FIND_USER, HANDLE_CHANGE, GET_PRICE } from "../actions/types";
 
-const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+let  initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+initialDate = initialDate.split("-")[0] + "-" + initialDate.split("-")[1] + "-20" + initialDate.split("-")[2]
 
 const initialState = {
     freeHours: ['sin horario para hoy'],

@@ -25,7 +25,8 @@ const useStyle = makeStyles({
 })
 
 function FormReservas(props) {
-  const initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+  let  initialDate = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+  initialDate = initialDate.split("-")[0] + "-" + initialDate.split("-")[1] + "-20" + initialDate.split("-")[2]
   const fechaActual = new Date()
   const [dateToShow, setDateToShow] = useState(fechaActual)
   const [registrado, setRegistrado] = useState(false)
@@ -62,6 +63,7 @@ function FormReservas(props) {
   }
 
   useEffect(() => {
+    console.log(props.user.dia)
     if (props.user.dia === initialDate) {
       props.getHoursToday(props.user.dia)
     } else {
@@ -151,7 +153,8 @@ function FormReservas(props) {
                         value={dateToShow}
                         InputAdornmentProps={{ position: "start" }}
                         onChange={date => {
-                          const fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                          let fechaelegida = new Date(date.toString().slice(4, 15)).toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
+                          fechaelegida = fechaelegida.split("-")[0] + "-" + fechaelegida.split("-")[1] + "-20" + fechaelegida.split("-")[2]
                           props.saveInfo('HANDLE_CHANGE', { nombre: 'dia', data: fechaelegida })
                           setDateToShow(date)
                         }}
