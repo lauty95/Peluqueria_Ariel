@@ -1,12 +1,11 @@
 const express = require('express');
-const { Cliente } = require('../db');
 const router = express();
 
 const clientes = require("./clientes")
 const usuario = require("./usuario")
-const promocion = require("./promocion")
+const notificaciones = require("./notificaciones")
 router.use("/", clientes);
 router.use("/", usuario);
-router.use("/", promocion);
+router.use("/", notificaciones);
 
 module.exports = router;

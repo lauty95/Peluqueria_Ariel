@@ -24,6 +24,39 @@ router.get('/usuario/:id', async (req, res) => {
     let registros = []
     let registrosOrdenados = []
     let ultimoTurno = []
+
+    const buscarUsuario = async (info) => {
+        const user = await Usuario.findAll({
+            where: {
+                id
+            }
+        })
+
+        let resultado
+        if (info) {
+            resultado = {
+                id: user[0].id,
+                nombre: user[0].nombre,
+                telefono: user[0].telefono,
+                tienePromo: ultimoTurno.length > 0 && ultimoTurno[0].tienePromo,
+                diaPromo: registrosOrdenados.length > 0 ? registrosOrdenados === 0 ? '' : registrosOrdenados : '',
+                ultimoRegistro,
+                turno: ultimoTurno.length > 0 ? ultimoTurno[0].turno : '',
+            }
+        } else {
+            resultado = {
+                id: user.length > 0 ? user[0].id : '',
+                nombre: user.length > 0 ? user[0].nombre : '',
+                telefono: user.length > 0 ? user[0].telefono : '',
+                tienePromo: true,
+                diaPromo: '',
+                ultimoRegistro: '',
+                turno: '',
+            }
+        }
+        res.status(200).json(resultado)
+    }
+
     try {
         registros = await Cliente.findAll({
             where: {
@@ -39,28 +72,10 @@ router.get('/usuario/:id', async (req, res) => {
                 dia: ultimoRegistro
             }
         })
+        buscarUsuario(true)
     } catch {
         console.log('No se registran clientes con la id ', id)
-    }
-    try {
-        const user = await Usuario.findAll({
-            where: {
-                id
-            }
-        })
-
-        const resultado = {
-            id: user[0].id,
-            nombre: user[0].nombre,
-            telefono: user[0].telefono,
-            tienePromo: ultimoTurno[0].tienePromo,
-            diaPromo: registrosOrdenados.length > 0 ? registrosOrdenados === 0 ? '' : registrosOrdenados : '',
-            ultimoRegistro,
-            turno: ultimoTurno.length > 0 ? ultimoTurno[0].turno : '',
-        }
-        res.json(resultado)
-    } catch (err) {
-        res.json(err)
+        buscarUsuario(false)
     }
 })
 

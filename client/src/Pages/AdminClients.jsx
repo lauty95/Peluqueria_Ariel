@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { KeyboardDatePicker } from '@material-ui/pickers'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, alpha } from '@material-ui/core/styles'
 import axios from 'axios'
 import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
@@ -154,9 +154,6 @@ function AdminClients(props) {
                             <Button variant="primary" onClick={handleShowCanva}>
                                 Opciones
                             </Button>
-                            <Button variant="primary" onClick={() => props.history.push("/statistics")}>
-                                Estadisticas
-                            </Button>
                             <Button variant="info" onClick={tomarseElDia}>
                                 Tomarse el día
                             </Button>
@@ -269,7 +266,7 @@ function AdminClients(props) {
                 </Modal>
                 <Offcanvas show={showCanva} onHide={handleCloseCanva}>
                     <Offcanvas.Header closeButton>
-                        <Offcanvas.Title>Filtrado</Offcanvas.Title>
+                        <Offcanvas.Title>Opciones</Offcanvas.Title>
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <span>Filtrar por día</span>
@@ -309,12 +306,25 @@ function AdminClients(props) {
                         </div>
 
                         <hr />
+
                         <div className='setearPrecio'>
                             <input type="number" value={precio} name="precio" className="precio" onChange={e => setPrecio(e.target.value)} />
                             <div className="botonesFiltrado">
                                 <Button onClick={guardarPrecio}>Setear Precio</Button>
                             </div>
                         </div>
+
+                        <hr />
+
+                        <Button onClick={() => props.history.push("/promotions")}>
+                            Promociones
+                        </Button>
+
+                        <hr />
+
+                        <Button onClick={() => props.history.push("/statistics")}>
+                            Estadisticas
+                        </Button>
 
                     </Offcanvas.Body>
                 </Offcanvas>
