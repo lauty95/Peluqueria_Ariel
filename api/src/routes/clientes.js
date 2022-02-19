@@ -197,9 +197,8 @@ router.get('/statics', async (req, res) => {
         })
         let array = []
         for (let i = 1; i <= 12; i++) {
-            array[i - 1] = clientes.filter(el => Number(el.dia.split("-")[1]) === i && Number(el.dia.split("-")[2]) === new Date().getFullYear() - 2000).length
+            array[i - 1] = clientes.filter(el => Number(el.dia.split("-")[1]) === i && Number(el.dia.split("-")[2]) === new Date().getFullYear()).length
         }
-
         res.status(200).send(array)
     } catch (e) {
         console.log(e)
@@ -214,7 +213,7 @@ router.get('/semana/:dia', async (req, res) => {
     let filtrado = []
     dia = dia.split("-")
     for (let i = 0; i < 6; i++) {
-        semana.push(`${Number(dia[0]) + i}-${dia[1]}-${dia[2]}`)
+        semana.push(`${Number(dia[0]) + i}-${dia[1]}-20${dia[2]}`)
     }
     try {
         const clientes = await Cliente.findAll({
