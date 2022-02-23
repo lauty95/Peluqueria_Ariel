@@ -245,6 +245,9 @@ select {
     margin-left: 10px;
     font-size: 20px;
 }
+.chk-promotion span{
+    padding: 0;
+}
 
 @media (max-width: 600px) {
     .contenedorFormulario {

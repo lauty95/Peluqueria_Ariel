@@ -1,6 +1,8 @@
+import { Checkbox } from '@mui/material'
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { Button, Table } from 'react-bootstrap'
+import './../style.css'
 
 const Promotions = (props) => {
     const [cantidadDias, setCantidadDias] = useState(3)
@@ -13,14 +15,21 @@ const Promotions = (props) => {
     }, [])
 
     const buscarUsuarios = () => {
+        let arr = []
         axios.get(`/promocion/${cantidadDias}`)
-            .then(data => setUsuarios(data.data))
+            .then(data => {
+                data.data.forEach(user => {
+                    arr.push({ id: user.id, nombre: user.nombre, diaPromo: user.diaPromo, telefono: user.telefono, value: true })
+                })
+                setUsuarios(arr)
+            })
             .catch(err => console.log(err))
     }
 
     const enviarMensajes = () => {
         setEnviando(true)
-        axios.post('/enviarPromo', usuarios)
+        let data = usuarios.filter(user => user.value === true)
+        axios.post('/enviarPromo', data)
             .then(() => {
                 setEnviando(false)
                 setEnviado(true)
@@ -29,6 +38,13 @@ const Promotions = (props) => {
                 setEnviando(false)
                 setEnviado(true)
             })
+    }
+
+    const handleChange = (id) => {
+        setUsuarios(usuarios.map(user => {
+            if (user.id === id) return { ...user, value: !user.value }
+            return user
+        }))
     }
 
     return (
@@ -48,7 +64,8 @@ const Promotions = (props) => {
                     <tr>
                         <th>Nombre</th>
                         <th>Fecha</th>
-                        <th>Día Promocións</th>
+                        <th>Día Promoción</th>
+                        <th>Enviar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,6 +74,7 @@ const Promotions = (props) => {
                             <td>{user.nombre}</td>
                             <td>{user.dia}</td>
                             <td>{user.diaPromo}</td>
+                            <td className='chk-promotion'><Checkbox checked={user.value} onChange={() => handleChange(user.id)} /></td>
                         </tr>
                     )}
                 </tbody>
