@@ -79,7 +79,7 @@ const withOutSession = () => {
 }
 
 
-(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+// (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
 router.post("/newClient", async (req, res) => {
     var { nombre, telefono, dia, turno } = req.body
