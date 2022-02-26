@@ -151,7 +151,7 @@ function FormReservas(props) {
                         name='dia'
                         autoOk
                         className={classes.inputFecha}
-                        // minDate={fechaActual}
+                        minDate={fechaActual}
                         shouldDisableDate={date => date.getDay() === 0}
                         format="dd/MM/yyyy"
                         value={dateToShow}
