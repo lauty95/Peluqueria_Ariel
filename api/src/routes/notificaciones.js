@@ -69,12 +69,19 @@ const withOutSession = () => {
     client.initialize()
 }
 
-(fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
+// (fs.existsSync(SESSION_FILE_PATH)) ? withSession() : withOutSession()
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
     let mes = date.split('-')[1] - 1
     let anio = "" + 20 + date.split('-')[2]
+    let nuevaFecha = new Date(anio, mes, dia)
+    return nuevaFecha
+}
+function acomodarFechaCon20(date) {
+    let dia = date.split('-')[0]
+    let mes = date.split('-')[1] - 1
+    let anio = "" + date.split('-')[2]
     let nuevaFecha = new Date(anio, mes, dia)
     return nuevaFecha
 }
@@ -87,11 +94,11 @@ function devolverFecha(date) {
 }
 
 router.post("/newClient", async (req, res) => {
-    var { dia, tienePromo } = req.body
+    var { dia, tienePromo, diaPromo } = req.body
     const { id, nombre, telefono, turno } = req.body
     let calculoFecha = acomodarFecha(dia)
     calculoFecha.setDate(calculoFecha.getDate() + 21)
-    const diaPromo = devolverFecha(calculoFecha)
+    if (diaPromo.length === 0 || acomodarFechaCon20(diaPromo) < new Date()) diaPromo = devolverFecha(calculoFecha)
     const diaCompleto = devolverFecha(acomodarFecha(dia))
     try {
         const cantidadRegistros = await Cliente.findAll({

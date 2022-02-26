@@ -74,10 +74,15 @@ function FormReservas(props) {
   const handleChange = (e) => {
     props.saveInfo('HANDLE_CHANGE', { nombre: e.target.name, data: e.target.value })
   }
+  console.log(props.user)
 
   const registrarCliente = () => {
-    let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
-    let data = { ...props.user, tienePromo: conservaPromo, dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000) }
+    // let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
+    let conservaPromo = props.compararFecha(props.user.dia, props.user.diaPromo)
+    let data = { ...props.user,
+      tienePromo: conservaPromo,
+      dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000)
+    }
     axios.post('/newClient', data)
       .then(() => registroOk())
       .catch(() => registroFail())
@@ -146,7 +151,7 @@ function FormReservas(props) {
                         name='dia'
                         autoOk
                         className={classes.inputFecha}
-                        minDate={fechaActual}
+                        // minDate={fechaActual}
                         shouldDisableDate={date => date.getDay() === 0}
                         format="dd/MM/yyyy"
                         value={dateToShow}
