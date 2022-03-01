@@ -54,12 +54,7 @@ const Promotions = (props) => {
     console.log(props)
 
     const mensaje = (nombre, diaPromo) => {
-        return (`*ARIEL LUQUE PELUQUERIA DE CABALLEROS INFORMA*
-        Tienes disponible una promoción para tu siguiente corte por un valor de $${props.price / 2}.
-        Reserva a través de nuestra sitio
-        https://peluqueria-ariel.vercel.app/
-        antes del ${diaPromo.replace("-", "/").replace("-", "/")}.
-        Te espero ${nombre}!`)
+        return (`*ARIEL LUQUE PELUQUERIA DE CABALLEROS INFORMA* Tienes disponible una promoción para tu siguiente corte por un valor de $${props.price / 2}. Reserva a través de nuestra sitio https://peluqueria-ariel.vercel.app/ antes del ${diaPromo.replace("-", "/").replace("-", "/")}. Te espero ${nombre}!`)
     }
 
     return (
