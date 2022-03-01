@@ -1,8 +1,11 @@
-import { Checkbox } from '@mui/material'
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import './../style.css'
+import imgWsp from './../assets/wsp.png'
+import * as actionCreators from '../actions'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux';
 
 const Promotions = (props) => {
     const [cantidadDias, setCantidadDias] = useState(3)
@@ -12,6 +15,7 @@ const Promotions = (props) => {
 
     useEffect(() => {
         buscarUsuarios()
+        props.getPrice()
     }, [])
 
     const buscarUsuarios = () => {
@@ -47,6 +51,17 @@ const Promotions = (props) => {
         }))
     }
 
+    console.log(props)
+
+    const mensaje = (nombre, diaPromo) => {
+        return (`*ARIEL LUQUE PELUQUERIA DE CABALLEROS INFORMA*
+        Tienes disponible una promoción para tu siguiente corte por un valor de $${props.price / 2}.
+        Reserva a través de nuestra sitio
+        https://peluqueria-ariel.vercel.app/
+        antes del ${diaPromo.replace("-", "/").replace("-", "/")}.
+        Te espero ${nombre}!`)
+    }
+
     return (
         <div className="promotion">
             <div className="botones">
@@ -74,12 +89,19 @@ const Promotions = (props) => {
                             <td>{user.nombre}</td>
                             <td>{user.dia}</td>
                             <td>{user.diaPromo}</td>
-                            <td className='chk-promotion'><Checkbox checked={user.value} onChange={() => handleChange(user.id)} /></td>
+                            <td>{
+                                <img
+                                    name={user.telefono}
+                                    onClick={() => props.contactMe(user.telefono, mensaje(user.nombre, user.diaPromo))}
+                                    className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
+                                />
+                            }</td>
+                            {/* <td className='chk-promotion'><Checkbox checked={user.value} onChange={() => handleChange(user.id)} /></td> */}
                         </tr>
                     )}
                 </tbody>
             </Table>
-            <Button disabled={enviado} variant="info" onClick={enviarMensajes}>
+            {/* <Button disabled={enviado} variant="info" onClick={enviarMensajes}>
                 {
                     enviado ?
                         "Mensajes enviados"
@@ -89,9 +111,19 @@ const Promotions = (props) => {
                             :
                             "Enviar Aviso"
                 }
-            </Button>
+            </Button> */}
         </div>
     )
 }
 
-export default Promotions
+const mapStateToProps = function (state) {
+    return {
+        price: state.price
+    }
+}
+
+const mapDispatchToProps = function (dispatch) {
+    return bindActionCreators(actionCreators, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Promotions)
