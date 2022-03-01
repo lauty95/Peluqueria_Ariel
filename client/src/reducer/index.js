@@ -58,7 +58,7 @@ function reducer(state = initialState, { type, payload }) {
                 tienePromo: payload.tienePromo,
                 diaPromo: payload.diaPromo,
                 ultimoRegistro: payload.ultimoRegistro,
-                turno: payload.turno
+                turno: ""
             }
             if (!user.nombre) user.newUser = true
             return {
