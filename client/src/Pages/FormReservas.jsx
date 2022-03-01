@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { KeyboardDatePicker } from '@material-ui/pickers'
-import { makeStyles, alpha } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import axios from 'axios'
 import { useSnackbar } from 'notistack';
 import Slide from '@material-ui/core/Slide';
@@ -74,11 +74,10 @@ function FormReservas(props) {
   const handleChange = (e) => {
     props.saveInfo('HANDLE_CHANGE', { nombre: e.target.name, data: e.target.value })
   }
-  console.log(props.user)
 
   const registrarCliente = () => {
     // let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
-    let conservaPromo = props.compararFecha(props.user.dia, props.user.diaPromo)
+    let conservaPromo = !props.compararFecha(props.user.dia, props.user.diaPromo)
     let data = { ...props.user,
       tienePromo: conservaPromo,
       dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000)
