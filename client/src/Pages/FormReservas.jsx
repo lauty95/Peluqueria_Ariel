@@ -111,7 +111,7 @@ function FormReservas(props) {
     props.getUser(props.user.id)
     setLogin(true)
   }
-
+console.log(props.user, props.compararFecha(initialDate, props.user.diaPromo))
   return (
     <>
       {props.freeHours.length !== 0 ?
