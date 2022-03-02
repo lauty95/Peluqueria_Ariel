@@ -177,7 +177,7 @@ function FormReservas(props) {
                     </select>
                   </div>
                   {
-                    !props.user.tienePromo && props.compararFecha(initialDate, props.user.diaPromo) &&
+                    props.compararFecha(initialDate, props.user.diaPromo) &&
                     <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} precio={props.price} />
                   }
                   <button disabled={registrado} className="boton" type="submit">Reservar</button>
