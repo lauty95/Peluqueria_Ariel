@@ -87,6 +87,21 @@ router.post('/deleteClient/:id', async (req, res) => {
     }
 })
 
+router.put('/updateClient', async (req, res) => {
+    const data = req.body
+    try {
+        await Cliente.update(data, {
+            where: {
+                id: data.id
+            }
+        })
+
+        res.status(200).json({ msg: 'user edited' })
+    } catch (err) {
+        res.status(500).json(err)
+    }
+})
+
 router.get('/adminHours/:fecha', async (req, res) => {
     const { fecha } = req.params
     const clientes = await Cliente.findAll({
