@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from '../actions'
 import Spinner from '../Components/Spinner';
+import subsription from './pushNotification';
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -60,7 +61,9 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-    
+
+    useEffect(() => { subsription() }, [])
+
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
