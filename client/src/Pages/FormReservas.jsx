@@ -38,14 +38,14 @@ function FormReservas(props) {
 
   const registroOk = () => {
     setRegistrado(true)
-    enqueueSnackbar('Registramos su reserva con éxito!', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'left',
-      },
-      TransitionComponent: Slide,
-      variant: 'success',
-    })
+    // enqueueSnackbar('Registramos su reserva con éxito!', {
+    //   anchorOrigin: {
+    //     vertical: 'top',
+    //     horizontal: 'left',
+    //   },
+    //   TransitionComponent: Slide,
+    //   variant: 'success',
+    // })
   }
 
   const registroFail = (msg) => {
@@ -78,7 +78,8 @@ function FormReservas(props) {
   const registrarCliente = () => {
     // let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
     let conservaPromo = !props.compararFecha(props.user.dia, props.user.diaPromo)
-    let data = { ...props.user,
+    let data = {
+      ...props.user,
       tienePromo: conservaPromo,
       dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000)
     }
@@ -111,7 +112,7 @@ function FormReservas(props) {
     props.getUser(props.user.id)
     setLogin(true)
   }
-  
+
   return (
     <>
       {props.freeHours.length !== 0 ?
@@ -129,6 +130,9 @@ function FormReservas(props) {
               </>
               :
               <>
+                <div className={`alert alert-success`} hidden={!registrado}>
+                  <b>Registramos tu reserva con éxito</b>
+                </div>
                 <form className={`formularioReservas ${!login && 'visible'}`} onSubmit={handleSubmit}>
                   <div className="filaFormulario">
                     <span>NOMBRE</span>
