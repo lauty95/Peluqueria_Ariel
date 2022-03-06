@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express();
-const { Cliente, Precio, Push } = require('../db');
+const { Cliente, Push } = require('../db');
 const uuid4 = require('uuid4');
 const { PUBLIC_KEY, PRIVATE_KEY } = process.env;
 const webpush = require('web-push');
-let push;
 webpush.setVapidDetails('mailto:lautaroJ95@gmail.com', PUBLIC_KEY, PRIVATE_KEY)
 
 function acomodarFecha(date) {
@@ -33,6 +32,11 @@ router.post('/subscription', async (req, res) => {
     const { endpoint, expirationTime, keys } = req.body
 
     try {
+        try {
+            await webpush.sendNotification(req.body, JSON.stringify({ title: "Notificación", message: "Mensaje de prueba" }));
+        } catch (err) {
+            console.log(err)
+        }
         await Push.destroy({
             where: {},
             truncate: true
@@ -95,7 +99,7 @@ router.post("/newClient", async (req, res) => {
                 auth: noti[0].auth
             }
         }
-        
+
         try {
             await webpush.sendNotification(point, payload);
         } catch (err) {

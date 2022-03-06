@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from '../actions'
 import Spinner from '../Components/Spinner';
-import subsription from './pushNotification';
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -25,6 +24,7 @@ const useStyle = makeStyles({
 const diaActual = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
 
 function AdminClients(props) {
+    const PUBLIC_KEY = 'BG-QtwSxtBRr5_OQfEjpE5QtWhJG8Oj18oeOwiUWf79RvWSt5uL9XBfKXLlJV97CxghoEWQpS4fAygxFuC-6LlQ';
     let fecha = new Date().toLocaleString('es-AR', { dateStyle: 'short' }).replaceAll('/', '-')
     const [fechaActual, setFechaActual] = useState(fecha.split("-")[0] + "-" + fecha.split("-")[1] + "-20" + fecha.split("-")[2])
     const [dateToShow, setDateToShow] = useState(new Date())
@@ -69,6 +69,24 @@ function AdminClients(props) {
         axios.get(`/precio`)
             .then(r => setPrecio(r.data.precio))
     }, [render, fechaActual])
+
+    const subsription = async () => {
+
+        const register = await navigator.serviceWorker.register('/worker.js', {
+            scope: '/'
+        });
+
+        await navigator.serviceWorker.ready;
+
+        const subscription = await register.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: PUBLIC_KEY
+        })
+
+        console.log("subscribiendo")
+
+        await axios.post('/subscription', subscription)
+    }
 
     const deleteRegister = (id) => {
         axios.post(`/deleteClient/${id}`)
@@ -328,7 +346,7 @@ function AdminClients(props) {
                         <Button onClick={() => props.history.push("/statistics")}>
                             Estadisticas
                         </Button>
-                        
+
                         <hr />
 
                         <Button onClick={() => subsription()}>
