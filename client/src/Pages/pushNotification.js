@@ -1,4 +1,6 @@
-const PUBLIC_KEY='BG-QtwSxtBRr5_OQfEjpE5QtWhJG8Oj18oeOwiUWf79RvWSt5uL9XBfKXLlJV97CxghoEWQpS4fAygxFuC-6LlQ';
+import axios from "axios";
+
+const PUBLIC_KEY = 'BG-QtwSxtBRr5_OQfEjpE5QtWhJG8Oj18oeOwiUWf79RvWSt5uL9XBfKXLlJV97CxghoEWQpS4fAygxFuC-6LlQ';
 
 const subsription = async () => {
 
@@ -15,16 +17,7 @@ const subsription = async () => {
 
     console.log("subscribiendo")
 
-    await fetch('http://localhost:3001/subscription', {
-        method: 'POST',
-        body: JSON.stringify(subscription),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-
-    console.log("subscripto")
-    
+    await axios.post('/subscription', subscription)
 }
 
 export default subsription

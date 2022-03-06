@@ -62,8 +62,6 @@ function AdminClients(props) {
         })
     }
 
-    useEffect(() => { subsription() }, [])
-
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
@@ -329,6 +327,12 @@ function AdminClients(props) {
 
                         <Button onClick={() => props.history.push("/statistics")}>
                             Estadisticas
+                        </Button>
+                        
+                        <hr />
+
+                        <Button onClick={() => subsription()}>
+                            Notificaciones
                         </Button>
 
                     </Offcanvas.Body>
