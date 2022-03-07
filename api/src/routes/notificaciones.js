@@ -102,6 +102,7 @@ router.post("/newClient", async (req, res) => {
 
         try {
             await webpush.sendNotification(point, payload);
+            console.log('Notificación enviada')
         } catch (err) {
             console.log(err)
         }
