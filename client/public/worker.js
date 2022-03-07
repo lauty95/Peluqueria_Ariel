@@ -5,7 +5,7 @@ self.addEventListener('push', e => {
     self.registration.showNotification(data.title, {
         body: data.message,
         data: {
-            url: JSON.parse(e.message).url
+            url: 'https://peluqueria-ariel.vercel.app/admin'
         }
     })
 })
