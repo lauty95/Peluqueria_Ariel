@@ -86,8 +86,7 @@ router.post("/newClient", async (req, res) => {
         });
         const payload = JSON.stringify({
             title: 'Nuevo cliente',
-            message: `${nombre} ha sacadco turno para el ${dia} a las ${turno}hs`,
-            url: `https://wa.me/549${telefono}?text=${`*ARIEL LUQUE PELUQUERÍA DE CABALLEROS*  te recuerda el turno de *${turno}* y recordá que por razones de protocolo *el cliente no podrá asistir con acompañantes* salvo si es un niño que necesita el acompañamiento de sus padres. Desde ya muchas gracias por elegirme. *RECORDÁ SER PUNTUAL*.   *VALOR DEL CORTE $600, CORTE PROMOCIÓN $300*`}`,
+            message: `${nombre} ha sacadco turno para el ${dia} a las ${turno}hs`
         })
 
         const noti = await Push.findAll()
