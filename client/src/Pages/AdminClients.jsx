@@ -153,7 +153,7 @@ function AdminClients(props) {
             .then(r => {
                 let filtrados = r.data.filter(el => transformarFecha(el.dia) >= new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()))
                 filtrados = filtrados.sort((a, b) => transformarFecha(a.dia, a.turno) - transformarFecha(b.dia, b.turno))
-                setRegistrados(filtrados)
+                setRegistrados(filtrados.reverse())
             })
         setMostrar(!mostrar)
     }

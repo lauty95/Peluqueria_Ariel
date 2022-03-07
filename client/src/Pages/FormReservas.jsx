@@ -13,6 +13,7 @@ import Login from '../Components/Login';
 import MessagePromo from '../Components/MessagePromo'
 import MessageBooked from '../Components/MessageBooked';
 import Footer from '../Components/Footer';
+import { Button, Modal } from 'react-bootstrap';
 
 const useStyle = makeStyles({
   inputFecha: {
@@ -32,20 +33,14 @@ function FormReservas(props) {
   const [registrado, setRegistrado] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
   const [login, setLogin] = useState(false)
+  const [show, setShow] = useState(false)
 
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
 
   const registroOk = () => {
     setRegistrado(true)
-    // enqueueSnackbar('Registramos su reserva con éxito!', {
-    //   anchorOrigin: {
-    //     vertical: 'top',
-    //     horizontal: 'left',
-    //   },
-    //   TransitionComponent: Slide,
-    //   variant: 'success',
-    // })
+    setShow(true)
   }
 
   const registroFail = (msg) => {
@@ -130,9 +125,6 @@ function FormReservas(props) {
               </>
               :
               <>
-                <div className={`alert alert-success`} hidden={!registrado}>
-                  <b>Registramos tu reserva con éxito</b>
-                </div>
                 <form className={`formularioReservas ${!login && 'visible'}`} onSubmit={handleSubmit}>
                   <div className="filaFormulario">
                     <span>NOMBRE</span>
@@ -192,6 +184,17 @@ function FormReservas(props) {
         :
         <Spinner />
       }
+      <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reservado!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{`Registramos tu reserva! Te esperamos el ${props.user.dia} a las ${props.user.turno}`}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShow(false)}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 }
