@@ -21,6 +21,8 @@ const useStyle = makeStyles({
     }
 })
 
+const primerAviso = (dia, turno, nombre) => `*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${dia} a las ${turno} Hs. Te espero ${nombre}.`;
+
 const diaActual = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
 
 function AdminClients(props) {
@@ -37,12 +39,21 @@ function AdminClients(props) {
     const [precio, setPrecio] = useState();
     const [mostrar, setMostrar] = useState(true)
     const [pickerStatus, setPickerStatus] = useState(false)
+    const [showwsp, setshowwsp] = useState(false)
+    const [wsp, setWsp] = useState({})
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleCloseWsp = () => setshowwsp(false)
+    const handleShowWsp = (wspMessage, telefono, turno, dia, nombre) => {
+        console.log(wspMessage)
+        setWsp({ mensaje: wspMessage, tel: telefono, turno, dia, nombre })
+        setshowwsp(true)
+    }
 
     const handleCloseTomarseElDia = () => setShowTomarseElDia(false);
     const handleShowTomarseElDia = () => setShowTomarseElDia(true);
@@ -209,7 +220,7 @@ function AdminClients(props) {
                                                                 name={user.telefono}
                                                                 onClick={() =>
                                                                     props.wspMessage ?
-                                                                        props.sendMessage(props.wspMessage, user.telefono, user.turno)
+                                                                        handleShowWsp(props.wspMessage, user.telefono, user.turno, user.dia, user.nombre)
                                                                         :
                                                                         registroOk("Debes setear un mensaje antes de enviar algo")}
                                                                 className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
@@ -257,6 +268,24 @@ function AdminClients(props) {
                             Si
                         </Button>
                     </Modal.Footer>
+                </Modal>
+                <Modal show={showwsp} onHide={handleCloseWsp}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Mensaje de WhatsApp</Modal.Title>
+                    </Modal.Header>
+                    {/* props.sendMessage(props.wspMessage, user.telefono, user.turno) */}
+                    <Modal.Body>
+                        <div className='container row'>
+                            <div className='col' onClick={() => props.sendMessage(wsp.mensaje, wsp.tel, wsp.turno)}>
+                                <h2>Recordatorio</h2>
+                                <img className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />
+                            </div>
+                            <div className='col' onClick={() => props.sendMessage(primerAviso(wsp.dia, wsp.turno, wsp.nombre), wsp.tel, wsp.turno)}>
+                                <h2>Primer aviso</h2>
+                                <img className='imagenWsp' src={imgWsp} alt="boton de whatsapp" />
+                            </div>
+                        </div>
+                    </Modal.Body>
                 </Modal>
                 <Modal show={showTomarseElDia} onHide={handleCloseTomarseElDia}>
                     <Modal.Header closeButton>
