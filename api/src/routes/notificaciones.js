@@ -32,9 +32,7 @@ router.post("/newClient", async (req, res) => {
     const { id, nombre, telefono, turno } = req.body
     let calculoFecha = acomodarFecha(dia)
     calculoFecha.setDate(calculoFecha.getDate() + 21)
-    if (!diaPromo) { diaPromo = devolverFecha(new Date()) } else {
-        if (diaPromo.length === 0 || acomodarFechaCon20(diaPromo) < new Date()) diaPromo = devolverFecha(calculoFecha)
-    }
+    if (diaPromo.length === 0 || acomodarFechaCon20(diaPromo) < new Date()) diaPromo = devolverFecha(calculoFecha)
     const diaCompleto = devolverFecha(acomodarFecha(dia))
     try {
         const cantidadRegistros = await Cliente.findAll({
