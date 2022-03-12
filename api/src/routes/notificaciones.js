@@ -2,9 +2,8 @@ const express = require('express');
 const router = express();
 const { Cliente, Push } = require('../db');
 const uuid4 = require('uuid4');
-const { PUBLIC_KEY, PRIVATE_KEY } = process.env;
-const webpush = require('web-push');
-webpush.setVapidDetails('mailto:lautaroJ95@gmail.com', PUBLIC_KEY, PRIVATE_KEY)
+const nodemailer = require("nodemailer")
+const { EMAIL_PASSWORD, EMAIL_FROM, EMAIL_TO } = process.env;
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
@@ -28,41 +27,14 @@ function devolverFecha(date) {
     return fecha + "-" + mes + "-" + anio
 }
 
-router.post('/subscription', async (req, res) => {
-    const { endpoint, expirationTime, keys } = req.body
-
-    try {
-        try {
-            await webpush.sendNotification(req.body, JSON.stringify({ title: "Notificación", message: "Mensaje de prueba" }));
-        } catch (err) {
-            console.log(err)
-        }
-        await Push.destroy({
-            where: {},
-            truncate: true
-        })
-        await Push.create({
-            endpoint,
-            expirationTime,
-            p256dh: keys.p256dh,
-            auth: keys.auth
-        })
-            .then(() => res.status(200).send({ msg: 'Precio guardado' }))
-    } catch (e) {
-        console.log(e)
-        res.status(500).send({ msg: 'Error al guardar el precio' })
-    }
-
-    res.status(200).json();
-})
-
 router.post("/newClient", async (req, res) => {
     var { dia, tienePromo, diaPromo } = req.body
     const { id, nombre, telefono, turno } = req.body
     let calculoFecha = acomodarFecha(dia)
     calculoFecha.setDate(calculoFecha.getDate() + 21)
-    if (!diaPromo) { diaPromo= devolverFecha(new Date()) } else {
-    if (diaPromo.length === 0 || acomodarFechaCon20(diaPromo) < new Date()) diaPromo = devolverFecha(calculoFecha)}
+    if (!diaPromo) { diaPromo = devolverFecha(new Date()) } else {
+        if (diaPromo.length === 0 || acomodarFechaCon20(diaPromo) < new Date()) diaPromo = devolverFecha(calculoFecha)
+    }
     const diaCompleto = devolverFecha(acomodarFecha(dia))
     try {
         const cantidadRegistros = await Cliente.findAll({
@@ -85,28 +57,41 @@ router.post("/newClient", async (req, res) => {
             turno,
             idCliente: id,
         });
-        const payload = JSON.stringify({
-            title: 'Nuevo cliente',
-            message: `${nombre} ha sacadco turno para el ${dia} a las ${turno}hs`
+
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            post: 465,
+            secure: true,
+            auth: {
+                user: EMAIL_FROM,
+                pass: EMAIL_PASSWORD
+            }
         })
 
-        const noti = await Push.findAll()
+        const mailOptions = {
+            from: EMAIL_FROM,
+            to: EMAIL_TO,
+            subject: `Nuevo cliente | ${nombre}`,
+            html: `
+                <h1>Nuevo cliente</h1>
+                <hr />
+                <b>${nombre} ha sacado turno el día ${diaCompleto} a las ${turno}</b>
+                <hr />
+                <hr />
+                <a href="https://wa.me/549${telefono}?text=*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${diaCompleto} a las ${turno} Hs. Te espero ${nombre}.">
+                    <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" width="300px" heigth="300px"></img>
+                </a>
+            `
+        }
 
-        const point = {
-            endpoint: noti[0].endpoint,
-            expirationTime: noti[0].expirationTime,
-            keys: {
-                p256dh: noti[0].p256dh,
-                auth: noti[0].auth
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log("Email enviado")
             }
-        }
+        })
 
-        try {
-            await webpush.sendNotification(point, payload);
-            console.log('Notificación enviada')
-        } catch (err) {
-            console.log(err)
-        }
         res.status(200).send({ msg: 'created' })
     } catch (e) {
         console.log(e)

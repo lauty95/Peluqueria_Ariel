@@ -34,14 +34,4 @@ module.exports = (sequelize) => {
   const Precio = sequelize.define('precio', {
     precio: { type: DataTypes.INTEGER, allowNull: true }
   })
-
-  const Push = sequelize.define('push', {
-    endpoint: { type: DataTypes.STRING, allowNull: false },
-    expirationTime: { type: DataTypes.STRING, allowNull: true },
-    p256dh: { type: DataTypes.STRING, allowNull: false },
-    auth: { type: DataTypes.STRING, allowNull: false },
-  },
-    {
-      timestamps: false
-    })
-};
+}
