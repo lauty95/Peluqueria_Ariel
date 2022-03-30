@@ -102,4 +102,19 @@ router.post('/deleteUser/:id', async (req, res) => {
     }
 })
 
+router.put('/updateUser', async (req, res) => {
+    const data = req.body
+    try {
+        await Usuario.update({ nombre: data.nombre, telefono: data.telefono }, {
+            where: {
+                id: data.id
+            }
+        })
+
+        res.status(200).json({ msg: 'user edited' })
+    } catch (err) {
+        res.status(500).json(err)
+    }
+})
+
 module.exports = router;
