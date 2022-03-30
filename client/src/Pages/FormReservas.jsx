@@ -34,7 +34,7 @@ function FormReservas(props) {
   const [pickerStatus, setPickerStatus] = useState(false)
   const [login, setLogin] = useState(false)
   const [show, setShow] = useState(false)
-
+  const [update, setUpdate] = useState(false)
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -56,7 +56,7 @@ function FormReservas(props) {
       variant: 'error',
     })
   }
-
+  console.log(update)
   useEffect(() => {
     if (props.user.dia === initialDate) {
       props.getHoursToday(props.user.dia)
@@ -67,6 +67,7 @@ function FormReservas(props) {
   }, [dateToShow, props.user])
 
   const handleChange = (e) => {
+    if (e.target.name === 'telefono' || e.target.name === "nombre") setUpdate(true)
     props.saveInfo('HANDLE_CHANGE', { nombre: e.target.name, data: e.target.value })
   }
 
@@ -88,10 +89,13 @@ function FormReservas(props) {
     if (props.user.turno && props.user.turno !== '' && props.user.turno !== 'sin horario para hoy' && props.user.turno !== 'Elige el horario') {
       if (props.user.telefono.length === 10) {
         setRegistrado(true)
+        if (update) {
+          axios.put('/updateUser', props.user)
+        }
         if (props.user.newUser) {
           axios.post('/newUser', props.user)
             .then(() => registrarCliente())
-            .catch(() => console.log('falló crear un nuevo usuario'))
+            .catch(() => console.log('falló crear un nuevo usuario'))          
         } else {
           registrarCliente()
         }
