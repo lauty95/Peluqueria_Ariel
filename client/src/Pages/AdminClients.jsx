@@ -50,7 +50,6 @@ function AdminClients(props) {
 
     const handleCloseWsp = () => setshowwsp(false)
     const handleShowWsp = (wspMessage, telefono, turno, dia, nombre) => {
-        console.log(wspMessage)
         setWsp({ mensaje: wspMessage, tel: telefono, turno, dia, nombre })
         setshowwsp(true)
     }
@@ -93,8 +92,6 @@ function AdminClients(props) {
             userVisibleOnly: true,
             applicationServerKey: PUBLIC_KEY
         })
-
-        console.log("subscribiendo")
 
         await axios.post('/subscription', subscription)
     }
@@ -346,6 +343,7 @@ function AdminClients(props) {
                                     :
                                     <Button onClick={reset}>Reset</Button>
                             }
+                            <Button onClick={() => props.history.push("/search")} > Buscar Cliente</Button>
                         </div>
 
                         <hr />
@@ -384,7 +382,7 @@ function AdminClients(props) {
 
                     </Offcanvas.Body>
                 </Offcanvas>
-            </div>
+            </div >
             :
             <Spinner />
     )

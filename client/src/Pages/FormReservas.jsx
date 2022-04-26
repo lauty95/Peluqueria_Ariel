@@ -56,7 +56,6 @@ function FormReservas(props) {
       variant: 'error',
     })
   }
-  console.log(update)
   useEffect(() => {
     if (props.user.dia === initialDate) {
       props.getHoursToday(props.user.dia)
