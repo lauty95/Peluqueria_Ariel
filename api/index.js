@@ -17,12 +17,34 @@
 //     =====`-.____`.___ \_____/___.-`___.-'=====
 //                       `=---='
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+const { Cliente, Mensaje, Precio } = require('./src/db');
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
+const { default: axios } = require('axios');
+const PORT = process.env.PORT;
 
 // Syncing all the models at once.
 conn.sync({ force: false }).then(() => {
-  server.listen(process.env.PORT, () => {
-    console.log('listening at 3001');
+
+  // axios.get('https://peluqueria-ariel.herokuapp.com/allClients')
+  //   .then(async item => {
+  //     item.data.forEach(async d => {
+  //       await Cliente.create({
+  //         id: d.id,
+  //         nombre: d.nombre,
+  //         telefono: d.telefono,
+  //         tienePromo: d.tienePromo,
+  //         dia: d.dia,
+  //         diaPromo: d.diaPromo,
+  //         turno: d.turno,
+  //         idCliente: d.idCliente,
+  //       });
+  //     })
+  //   })
+
+  server.listen(PORT, () => {
+    console.log(`Listening at port ${PORT}`);
   });
 });
+
+
