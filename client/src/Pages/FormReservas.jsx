@@ -64,7 +64,7 @@ function FormReservas(props) {
       props.getFreeHours(props.user.dia)
     }
     props.getPrice()
-    if (dateToShow.getDay() === 3) {
+    if (dateToShow.getDay() === 0) {
       setSunday(true)
     } else {
       setSunday(false)
