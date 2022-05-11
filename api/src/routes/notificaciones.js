@@ -30,31 +30,41 @@ function devolverFecha(date) {
 router.post("/newClient", async (req, res) => {
     var { dia, tienePromo, diaPromo } = req.body
     const { id, nombre, telefono, turno } = req.body
-    let calculoFecha = acomodarFecha(dia)
-    calculoFecha.setDate(calculoFecha.getDate() + 21)
-    if (diaPromo.length === 0 || acomodarFechaCon20(diaPromo) < new Date()) diaPromo = devolverFecha(calculoFecha)
-    const diaCompleto = devolverFecha(acomodarFecha(dia))
+    let diaCompleto;
     try {
         const cantidadRegistros = await Cliente.findAll({
             where: {
                 idCliente: id
             }
         })
-
-        if (cantidadRegistros.length === 0) {
-            tienePromo = true
+        if (cantidadRegistros.length > 0 && acomodarFechaCon20(diaPromo) > acomodarFechaCon20(dia)) {
+            diaCompleto = devolverFecha(acomodarFechaCon20(dia))
+            await Cliente.create({
+                id: uuid4(),
+                nombre,
+                telefono,
+                tienePromo: false,
+                dia: diaCompleto,
+                diaPromo,
+                turno,
+                idCliente: id,
+            });            
+        } else {
+            let calculoFecha = acomodarFecha(dia)
+            calculoFecha.setDate(calculoFecha.getDate() + 21)
+            diaPromo = devolverFecha(calculoFecha)
+            diaCompleto = devolverFecha(acomodarFechaCon20(dia))
+            await Cliente.create({
+                id: uuid4(),
+                nombre,
+                telefono,
+                tienePromo: false,
+                dia: diaCompleto,
+                diaPromo,
+                turno,
+                idCliente: id,
+            });
         }
-
-        await Cliente.create({
-            id: uuid4(),
-            nombre,
-            telefono,
-            tienePromo,
-            dia: diaCompleto,
-            diaPromo: diaPromo,
-            turno,
-            idCliente: id,
-        });
 
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',

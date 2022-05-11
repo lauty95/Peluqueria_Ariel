@@ -17,7 +17,7 @@
 //     =====`-.____`.___ \_____/___.-`___.-'=====
 //                       `=---='
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-const { Cliente, Mensaje, Precio } = require('./src/db');
+const { Cliente, Mensaje, Precio, Usuario } = require('./src/db');
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 const { default: axios } = require('axios');
@@ -38,6 +38,17 @@ conn.sync({ force: false }).then(() => {
   //         diaPromo: d.diaPromo,
   //         turno: d.turno,
   //         idCliente: d.idCliente,
+  //       });
+  //     })
+  //   })
+
+  // axios.get('https://peluqueria-ariel.herokuapp.com/allUsers')
+  //   .then(async item => {
+  //     item.data.forEach(async d => {
+  //       await Usuario.create({
+  //         id: d.id,
+  //         nombre: d.nombre,
+  //         telefono: d.telefono,
   //       });
   //     })
   //   })

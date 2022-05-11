@@ -31,6 +31,7 @@ function FormReservas(props) {
   const fechaActual = new Date()
   const [dateToShow, setDateToShow] = useState(fechaActual)
   const [registrado, setRegistrado] = useState(false)
+  const [sunday, setSunday] = useState(false)
   const [pickerStatus, setPickerStatus] = useState(false)
   const [login, setLogin] = useState(false)
   const [show, setShow] = useState(false)
@@ -63,6 +64,11 @@ function FormReservas(props) {
       props.getFreeHours(props.user.dia)
     }
     props.getPrice()
+    if (dateToShow.getDay() === 3) {
+      setSunday(true)
+    } else {
+      setSunday(false)
+    }
   }, [dateToShow, props.user])
 
   const handleChange = (e) => {
@@ -71,7 +77,6 @@ function FormReservas(props) {
   }
 
   const registrarCliente = () => {
-    // let conservaPromo = !(props.user.tienePromo && props.compararFecha(props.user.dia, props.user.diaPromo))
     let conservaPromo = !props.compararFecha(props.user.dia, props.user.diaPromo)
     let data = {
       ...props.user,
@@ -94,7 +99,7 @@ function FormReservas(props) {
         if (props.user.newUser) {
           axios.post('/newUser', props.user)
             .then(() => registrarCliente())
-            .catch(() => console.log('falló crear un nuevo usuario'))          
+            .catch(() => console.log('falló crear un nuevo usuario'))
         } else {
           registrarCliente()
         }
@@ -179,7 +184,7 @@ function FormReservas(props) {
                     props.compararFecha(initialDate, props.user.diaPromo) &&
                     <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} precio={props.price} />
                   }
-                  <button disabled={registrado} className="boton" type="submit">Reservar</button>
+                  <button disabled={registrado || sunday} className="boton" type="submit">Reservar</button>
                 </form>
               </>}
           </div>
