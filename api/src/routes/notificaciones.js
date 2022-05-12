@@ -30,41 +30,53 @@ function devolverFecha(date) {
 router.post("/newClient", async (req, res) => {
     var { dia, tienePromo, diaPromo } = req.body
     const { id, nombre, telefono, turno } = req.body
-    let diaCompleto;
+    const diaCompleto = devolverFecha(acomodarFecha(dia));
     try {
         const cantidadRegistros = await Cliente.findAll({
             where: {
                 idCliente: id
             }
         })
-        if (cantidadRegistros.length > 0 && acomodarFechaCon20(diaPromo) > acomodarFechaCon20(dia)) {
-            diaCompleto = devolverFecha(acomodarFechaCon20(dia))
+
+        if (cantidadRegistros.length === 0) {
+            tienePromo = true;
+            let calculoFecha = acomodarFecha(dia)
+            calculoFecha.setDate(calculoFecha.getDate() + 21)
+            diaPromo = devolverFecha(calculoFecha)
             await Cliente.create({
                 id: uuid4(),
                 nombre,
                 telefono,
-                tienePromo: false,
+                tienePromo,
                 dia: diaCompleto,
                 diaPromo,
                 turno,
                 idCliente: id,
-            });            
+            });
         } else {
-            let calculoFecha = acomodarFecha(dia)
-            calculoFecha.setDate(calculoFecha.getDate() + 21)
-            diaPromo = devolverFecha(calculoFecha)
-            diaCompleto = devolverFecha(acomodarFechaCon20(dia))
             await Cliente.create({
                 id: uuid4(),
                 nombre,
                 telefono,
-                tienePromo: false,
+                tienePromo,
                 dia: diaCompleto,
                 diaPromo,
                 turno,
                 idCliente: id,
             });
         }
+
+        if (cantidadRegistros.length > 0 && acomodarFechaCon20(diaPromo) > acomodarFechaCon20(dia)) {
+            diaCompleto = devolverFecha(acomodarFecha(dia))
+        } else {
+            let calculoFecha = acomodarFecha(dia)
+            calculoFecha.setDate(calculoFecha.getDate() + 21)
+            diaPromo = devolverFecha(calculoFecha)
+            diaCompleto = devolverFecha(acomodarFecha(dia))
+            tienePromo = true;
+        }
+
+
 
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',

@@ -77,7 +77,7 @@ function FormReservas(props) {
   }
 
   const registrarCliente = () => {
-    let conservaPromo = !props.compararFecha(props.user.dia, props.user.diaPromo)
+    let conservaPromo = props.compararFecha(props.user.dia, props.user.diaPromo)
     let data = {
       ...props.user,
       tienePromo: conservaPromo,

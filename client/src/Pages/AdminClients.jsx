@@ -208,8 +208,8 @@ function AdminClients(props) {
                                                     <td>{<button name={user} onClick={(e) => ocuparHorario(e, user)}>Ocupar</button>}</td>
                                                 </tr>
                                                 :
-                                                user.ocupado === 'Cliente' ?                             
-                                                    <tr className={!props.compararFecha(user.dia, user.diaPromo) ? "promo" : "cliente"}>
+                                                user.ocupado === 'Cliente' ?
+                                                    <tr className={props.tienePromo ? "promo" : "cliente"}>
                                                         <td onClick={() => props.contactMe(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
                                                         <td>{
