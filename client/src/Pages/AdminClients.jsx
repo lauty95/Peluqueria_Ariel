@@ -71,7 +71,7 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-
+    
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
@@ -209,7 +209,7 @@ function AdminClients(props) {
                                                 </tr>
                                                 :
                                                 user.ocupado === 'Cliente' ?
-                                                    <tr className={props.tienePromo ? "promo" : "cliente"}>
+                                                    <tr className={user.tienePromo ? "promo" : "cliente"}>
                                                         <td onClick={() => props.contactMe(user.telefono)}><b>{user.nombre}</b></td>
                                                         <td>{hoy(user.dia)} {user.turno} hs</td>
                                                         <td>{
