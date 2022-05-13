@@ -39,7 +39,7 @@ router.post("/newClient", async (req, res) => {
         })
 
         if (cantidadRegistros.length === 0) {
-            tienePromo = true;
+            tienePromo = false;
             let calculoFecha = acomodarFecha(dia)
             calculoFecha.setDate(calculoFecha.getDate() + 21)
             diaPromo = devolverFecha(calculoFecha)
@@ -65,18 +65,6 @@ router.post("/newClient", async (req, res) => {
                 idCliente: id,
             });
         }
-
-        if (cantidadRegistros.length > 0 && acomodarFechaCon20(diaPromo) > acomodarFechaCon20(dia)) {
-            diaCompleto = devolverFecha(acomodarFecha(dia))
-        } else {
-            let calculoFecha = acomodarFecha(dia)
-            calculoFecha.setDate(calculoFecha.getDate() + 21)
-            diaPromo = devolverFecha(calculoFecha)
-            diaCompleto = devolverFecha(acomodarFecha(dia))
-            tienePromo = true;
-        }
-
-
 
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',

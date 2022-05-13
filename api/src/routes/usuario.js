@@ -2,6 +2,14 @@ const { Cliente, Usuario } = require('../db');
 const express = require('express');
 const router = express();
 
+function acomodarFecha(date) {
+    let dia = date.split('-')[0]
+    let mes = date.split('-')[1] - 1
+    let anio = "" + date.split('-')[2]
+    let nuevaFecha = new Date(anio, mes, dia)
+    return nuevaFecha
+}
+
 const mayorFecha = (a, b) => a = a > b ? a : b
 
 router.post('/newUser', async (req, res) => {
@@ -63,19 +71,22 @@ router.get('/usuario/:id', async (req, res) => {
                 idCliente: id
             }
         })
+        res.status(200).json(registros)
+        // registrosOrdenados = registros.sort((a, b) => acomodarFecha(a.diaPromo) > acomodarFecha(b.diaPromo))
+        // registrosOrdenados = registrosOrdenados[registrosOrdenados.length - 1].diaPromo
+        // ultimoRegistro = registros.sort((a, b) => acomodarFecha(a.dia) > acomodarFecha(b.dia))
+        // ultimoRegistro = ultimoRegistro[ultimoRegistro.length - 1].dia
 
-        registrosOrdenados = registros.reduce((a, b) => mayorFecha(a.diaPromo, b.diaPromo), 0)
-        ultimoRegistro = registros.reduce((a, b) => mayorFecha(a.dia, b.dia), 0)
-        ultimoTurno = await Cliente.findAll({
-            where: {
-                idCliente: id,
-                dia: ultimoRegistro
-            }
-        })
-        buscarUsuario(true)
+        // ultimoTurno = await Cliente.findAll({
+        //     where: {
+        //         idCliente: id,
+        //         dia: ultimoRegistro
+        //     }
+        // })
+        // buscarUsuario(true)
     } catch {
         console.log('No se registran clientes con la id ', id)
-        buscarUsuario(false)
+        // buscarUsuario(false)
     }
 })
 

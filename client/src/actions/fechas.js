@@ -5,7 +5,7 @@ export const compararFecha = (date1, date2) => {
     }
 }
 
-const transformarFecha = (date) => {
+export const transformarFecha = (date) => {
     const dia = date.split("-")[0]
     const mes = date.split("-")[1] - 1
     let anio = date.split("-")[2]
