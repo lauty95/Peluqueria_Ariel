@@ -8,6 +8,7 @@ export const getUser = (id) => {
     return function (dispatch) {
         axios.get(`/usuario/${id}`)
             .then(res => {
+                console.log(res.data)
                 let ord = res.data.sort((a, b) => {
                     if (transformarFecha(a.dia) > transformarFecha(b.dia)) {
                         return -1

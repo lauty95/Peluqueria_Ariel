@@ -30,40 +30,6 @@ router.post('/newUser', async (req, res) => {
 router.get('/usuario/:id', async (req, res) => {
     const { id } = req.params
     let registros = []
-    let registrosOrdenados = []
-    let ultimoTurno = []
-
-    const buscarUsuario = async (info) => {
-        const user = await Usuario.findAll({
-            where: {
-                id
-            }
-        })
-
-        let resultado
-        if (info) {
-            resultado = {
-                id: user[0].id,
-                nombre: user[0].nombre,
-                telefono: user[0].telefono,
-                tienePromo: ultimoTurno.length > 0 && ultimoTurno[0].tienePromo,
-                diaPromo: registrosOrdenados.length > 0 ? registrosOrdenados === 0 ? '' : registrosOrdenados : '',
-                ultimoRegistro,
-                turno: ultimoTurno.length > 0 ? ultimoTurno[0].turno : '',
-            }
-        } else {
-            resultado = {
-                id: user.length > 0 ? user[0].id : '',
-                nombre: user.length > 0 ? user[0].nombre : '',
-                telefono: user.length > 0 ? user[0].telefono : '',
-                tienePromo: true,
-                diaPromo: '',
-                ultimoRegistro: '',
-                turno: '',
-            }
-        }
-        res.status(200).json(resultado)
-    }
 
     try {
         registros = await Cliente.findAll({
@@ -71,22 +37,24 @@ router.get('/usuario/:id', async (req, res) => {
                 idCliente: id
             }
         })
+        registros = registros.map(item => {
+            return {
+                id: item.id,
+                nombre: item.nombre,
+                telefono: item.telefono,
+                tienePromo: item.tienePromo,
+                dia: item.dia,
+                diaPromo: item.diaPromo,
+                turno: item.turno,
+                idCliente: item.idCliente,
+                ocupado: item.ocupado,
+                ultimoRegistro: item.dia
+            }
+        })
         res.status(200).json(registros)
-        // registrosOrdenados = registros.sort((a, b) => acomodarFecha(a.diaPromo) > acomodarFecha(b.diaPromo))
-        // registrosOrdenados = registrosOrdenados[registrosOrdenados.length - 1].diaPromo
-        // ultimoRegistro = registros.sort((a, b) => acomodarFecha(a.dia) > acomodarFecha(b.dia))
-        // ultimoRegistro = ultimoRegistro[ultimoRegistro.length - 1].dia
-
-        // ultimoTurno = await Cliente.findAll({
-        //     where: {
-        //         idCliente: id,
-        //         dia: ultimoRegistro
-        //     }
-        // })
-        // buscarUsuario(true)
     } catch {
         console.log('No se registran clientes con la id ', id)
-        // buscarUsuario(false)
+        res.status(400).json({ error: 'No se registran clientes con esa id' })
     }
 })
 

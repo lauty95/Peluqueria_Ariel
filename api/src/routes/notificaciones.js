@@ -38,8 +38,7 @@ router.post("/newClient", async (req, res) => {
             }
         })
 
-        if (cantidadRegistros.length === 0) {
-            tienePromo = false;
+        if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)){
             let calculoFecha = acomodarFecha(dia)
             calculoFecha.setDate(calculoFecha.getDate() + 21)
             diaPromo = devolverFecha(calculoFecha)
@@ -47,7 +46,7 @@ router.post("/newClient", async (req, res) => {
                 id: uuid4(),
                 nombre,
                 telefono,
-                tienePromo,
+                tienePromo: false,
                 dia: diaCompleto,
                 diaPromo,
                 turno,
@@ -58,7 +57,7 @@ router.post("/newClient", async (req, res) => {
                 id: uuid4(),
                 nombre,
                 telefono,
-                tienePromo,
+                tienePromo: true,
                 dia: diaCompleto,
                 diaPromo,
                 turno,
