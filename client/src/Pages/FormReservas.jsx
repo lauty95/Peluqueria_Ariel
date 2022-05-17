@@ -84,6 +84,7 @@ function FormReservas(props) {
       tienePromo: conservaPromo,
       dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000)
     }
+
     axios.post('/newClient', data)
       .then(() => registroOk())
       .catch(() => registroFail())
@@ -102,6 +103,7 @@ function FormReservas(props) {
             .then(() => registrarCliente())
             .catch(() => console.log('falló crear un nuevo usuario'))
         } else {
+
           registrarCliente()
         }
       } else {
@@ -117,7 +119,6 @@ function FormReservas(props) {
     setLogin(true)
   }
 
-
   return (
     <>
       {props.freeHours.length !== 0 ?
@@ -128,7 +129,7 @@ function FormReservas(props) {
           </div>
           <Footer precio={props.price} className={login ? 'visible' : 'footer'} />
           <div className="contenedorFormulario">
-            {props.user.ultimoRegistro && !props.compararFecha(props.user.ultimoRegistro, initialDate) && login ?
+            {props.user.ultimoRegistro && props.compararFecha(initialDate, props.user.ultimoRegistro) && login ?
               <>
                 <MessageBooked fecha={props.user.ultimoRegistro} nombre={props.user.nombre} hora={props.user.turno} precio={props.price} />
                 <button className="boton" onClick={() => props.contactMe(null, null, props.user.nombre)}>Contactar <img width="40px" src={imgWsp} alt="Contacto por Whatsapp" /></button>
@@ -186,7 +187,7 @@ function FormReservas(props) {
                     props.compararFecha(initialDate, props.user.diaPromo) &&
                     <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} precio={props.price} />
                   }
-                  <button disabled={registrado || sunday} className="boton" type="submit">Reservar</button>
+                  <button /*disabled={registrado || sunday}*/ className="boton" type="submit">Reservar</button>
                 </form>
               </>}
           </div>
