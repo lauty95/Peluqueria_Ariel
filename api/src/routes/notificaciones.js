@@ -91,13 +91,13 @@ router.post("/newClient", async (req, res) => {
             `
         }
 
-        // transporter.sendMail(mailOptions, (err, info) => {
-        //     if (err) {
-        //         console.log(err)
-        //     } else {
-        //         console.log("Email enviado")
-        //     }
-        // })
+         transporter.sendMail(mailOptions, (err, info) => {
+             if (err) {
+                 console.log(err)
+             } else {
+                 console.log("Email enviado")
+             }
+         })
 
         res.status(200).send({ msg: 'created' })
     } catch (e) {
