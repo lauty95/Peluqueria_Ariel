@@ -41,6 +41,7 @@ function AdminClients(props) {
     const [pickerStatus, setPickerStatus] = useState(false)
     const [showwsp, setshowwsp] = useState(false)
     const [wsp, setWsp] = useState({})
+    const [cantClientes, setCantClientes] = useState(0);
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -71,13 +72,15 @@ function AdminClients(props) {
             variant: 'info',
         })
     }
-    
+
     useEffect(() => {
         axios.get(`/getClients/${fechaActual}`)
             .then(r => setRegistrados(r.data))
         props.getWspMessage()
         axios.get(`/precio`)
             .then(r => setPrecio(r.data.precio))
+        axios.get('/cantUsers')
+            .then(r => setCantClientes(r.data))
     }, [render, fechaActual])
 
     const subsription = async () => {
@@ -380,6 +383,9 @@ function AdminClients(props) {
                             Notificaciones
                         </Button>
 
+                        <hr />
+
+                        <p>Cantidad de clientes: {cantClientes}</p>
                     </Offcanvas.Body>
                 </Offcanvas>
             </div >

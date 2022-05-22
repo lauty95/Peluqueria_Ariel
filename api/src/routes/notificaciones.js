@@ -16,7 +16,7 @@ function acomodarFechaCon20(date) {
     let dia = date.split('-')[0]
     let mes = date.split('-')[1] - 1
     let anio = "" + date.split('-')[2]
-    let nuevaFecha = new Date(anio, mes, dia)
+    let nuevaFecha = new Date(mes + "/" + dia + "/" + anio)
     return nuevaFecha
 }
 
@@ -38,31 +38,35 @@ router.post("/newClient", async (req, res) => {
             }
         })
 
-        if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)){
+        if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)) {
             let calculoFecha = acomodarFecha(dia)
             calculoFecha.setDate(calculoFecha.getDate() + 21)
             diaPromo = devolverFecha(calculoFecha)
-            await Cliente.create({
-                id: uuid4(),
-                nombre,
-                telefono,
-                tienePromo: false,
-                dia: diaCompleto,
-                diaPromo,
-                turno,
-                idCliente: id,
-            });
+            await Cliente.create(
+                {
+                    id: uuid4(),
+                    nombre,
+                    telefono,
+                    tienePromo: false,
+                    dia: diaCompleto,
+                    diaPromo,
+                    turno,
+                    idCliente: id,
+                }
+            );
         } else {
-            await Cliente.create({
-                id: uuid4(),
-                nombre,
-                telefono,
-                tienePromo,
-                dia: diaCompleto,
-                diaPromo,
-                turno,
-                idCliente: id,
-            });
+            await Cliente.create(
+                {
+                    id: uuid4(),
+                    nombre,
+                    telefono,
+                    tienePromo,
+                    dia: diaCompleto,
+                    diaPromo,
+                    turno,
+                    idCliente: id,
+                }
+            );
         }
 
         const transporter = nodemailer.createTransport({
@@ -91,13 +95,13 @@ router.post("/newClient", async (req, res) => {
             `
         }
 
-         transporter.sendMail(mailOptions, (err, info) => {
-             if (err) {
-                 console.log(err)
-             } else {
-                 console.log("Email enviado")
-             }
-         })
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log("Email enviado")
+            }
+        })
 
         res.status(200).send({ msg: 'created' })
     } catch (e) {

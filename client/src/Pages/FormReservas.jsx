@@ -84,7 +84,6 @@ function FormReservas(props) {
       tienePromo: conservaPromo,
       dia: props.user.dia.split("-")[0] + "-" + props.user.dia.split("-")[1] + "-" + Number(props.user.dia.split("-")[2] - 2000)
     }
-
     axios.post('/newClient', data)
       .then(() => registroOk())
       .catch(() => registroFail())
@@ -103,7 +102,6 @@ function FormReservas(props) {
             .then(() => registrarCliente())
             .catch(() => console.log('falló crear un nuevo usuario'))
         } else {
-
           registrarCliente()
         }
       } else {
@@ -187,7 +185,7 @@ function FormReservas(props) {
                     props.compararFecha(initialDate, props.user.diaPromo) &&
                     <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} precio={props.price} />
                   }
-                  <button /*disabled={registrado || sunday}*/ className="boton" type="submit">Reservar</button>
+                  <button disabled={registrado || sunday} className="boton" type="submit">Reservar</button>
                 </form>
               </>}
           </div>

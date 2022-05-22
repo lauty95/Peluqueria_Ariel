@@ -67,6 +67,15 @@ router.get('/allUsers', async (req, res) => {
     }
 })
 
+router.get('/cantUsers', async (req, res) => {
+    try {
+        const cantidad = await Usuario.count()
+        res.status(200).json(cantidad)
+    } catch (err) {
+        res.json(err)
+    }
+})
+
 router.post('/deleteUser/:id', async (req, res) => {
     const { id } = req.params
     try {
