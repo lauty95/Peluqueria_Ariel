@@ -21,9 +21,10 @@ const Promotions = (props) => {
     const buscarUsuarios = () => {
         let arr = []
         axios.get(`/promocion/${cantidadDias}`)
-            .then(data => {
-                data.data.forEach(user => {
-                    arr.push({ id: user.id, nombre: user.nombre, diaPromo: user.diaPromo, telefono: user.telefono, value: true })
+            .then(res => {
+                res.data.forEach(user => {
+                    if (!arr.find((el) => el.telefono === user.telefono))
+                        arr.push({ id: user.id, nombre: user.nombre, diaPromo: user.diaPromo, telefono: user.telefono, value: true })
                 })
                 setUsuarios(arr)
             })
