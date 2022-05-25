@@ -30,10 +30,6 @@ router.get("/hoursFree/:dia", async (req, res) => {
     }
 })
 
-router.get("/getHours", async (req, res) => {
-    res.send(horarios)
-})
-
 router.get('/getClients/:fecha', async (req, res) => {
     const { fecha } = req.params
     var clientes = await Cliente.findAll({

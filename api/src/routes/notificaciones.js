@@ -4,6 +4,14 @@ const { Cliente, Push } = require('../db');
 const uuid4 = require('uuid4');
 const nodemailer = require("nodemailer")
 const { EMAIL_PASSWORD, EMAIL_FROM, EMAIL_TO } = process.env;
+const { Op } = require('sequelize');
+
+const horarios = [
+    '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
+    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+    '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+    '18:00', '18:30', '19:00', '19:30', '20:00'
+]
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
@@ -37,53 +45,67 @@ router.post("/newClient", async (req, res) => {
                 idCliente: id
             }
         })
-
-        if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)) {
-            let calculoFecha = acomodarFecha(dia)
-            calculoFecha.setDate(calculoFecha.getDate() + 21)
-            diaPromo = devolverFecha(calculoFecha)
-            await Cliente.create(
-                {
-                    id: uuid4(),
-                    nombre,
-                    telefono,
-                    tienePromo: false,
-                    dia: diaCompleto,
-                    diaPromo,
-                    turno,
-                    idCliente: id,
+        let diaSplit = dia.split("-")
+        let newDia = diaSplit[0] + "-" + diaSplit[1] + "-" + "20" + diaSplit[2]
+        const turnosLibres = await Cliente.findAll({
+            where: {
+                dia: {
+                    [Op.eq]: newDia
                 }
-            );
-        } else {
-            await Cliente.create(
-                {
-                    id: uuid4(),
-                    nombre,
-                    telefono,
-                    tienePromo,
-                    dia: diaCompleto,
-                    diaPromo,
-                    turno,
-                    idCliente: id,
-                }
-            );
-        }
-
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            post: 465,
-            secure: true,
-            auth: {
-                user: EMAIL_FROM,
-                pass: EMAIL_PASSWORD
             }
         })
+        let horariosDeTurnos = []
+        turnosLibres.forEach(el => horariosDeTurnos.push(el.turno))
+        let respuestaTurnos = horarios.filter(el => !horariosDeTurnos.includes(el))
+        console.log(respuestaTurnos.includes(turno))
+        console.log(respuestaTurnos)
+        if (respuestaTurnos.includes(turno)) {
+            if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)) {
+                let calculoFecha = acomodarFecha(dia)
+                calculoFecha.setDate(calculoFecha.getDate() + 21)
+                diaPromo = devolverFecha(calculoFecha)
+                await Cliente.create(
+                    {
+                        id: uuid4(),
+                        nombre,
+                        telefono,
+                        tienePromo: false,
+                        dia: diaCompleto,
+                        diaPromo,
+                        turno,
+                        idCliente: id,
+                    }
+                );
+            } else {
+                await Cliente.create(
+                    {
+                        id: uuid4(),
+                        nombre,
+                        telefono,
+                        tienePromo,
+                        dia: diaCompleto,
+                        diaPromo,
+                        turno,
+                        idCliente: id,
+                    }
+                );
+            }
 
-        const mailOptions = {
-            from: EMAIL_FROM,
-            to: EMAIL_TO,
-            subject: `Nuevo cliente | ${nombre}`,
-            html: `
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                post: 465,
+                secure: true,
+                auth: {
+                    user: EMAIL_FROM,
+                    pass: EMAIL_PASSWORD
+                }
+            })
+
+            const mailOptions = {
+                from: EMAIL_FROM,
+                to: EMAIL_TO,
+                subject: `Nuevo cliente | ${nombre}`,
+                html: `
                 <h1>Nuevo cliente</h1>
                 <hr />
                 <b>${nombre} ha sacado turno el día ${diaCompleto} a las ${turno}</b>
@@ -93,17 +115,20 @@ router.post("/newClient", async (req, res) => {
                     <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" width="300px" heigth="300px"></img>
                 </a>
             `
-        }
-
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                console.log(err)
-            } else {
-                console.log("Email enviado")
             }
-        })
 
-        res.status(200).send({ msg: 'created' })
+            // transporter.sendMail(mailOptions, (err, info) => {
+            //     if (err) {
+            //         console.log(err)
+            //     } else {
+            //         console.log("Email enviado")
+            //     }
+            // })
+
+            res.status(200).send({ msg: 'created' })
+        } else {
+            res.status(500).send({ msg: "ese turno está reservado" })
+        }
     } catch (e) {
         console.log(e)
         res.status(500).send(e);
