@@ -46,7 +46,7 @@ function FormReservas(props) {
 
   const registroFail = (msg) => {
     if (!msg) {
-      msg = 'Hubo un error con nuestros servidores'
+      msg = 'Parece que ese turno está ocupado'
     }
     enqueueSnackbar(msg, {
       anchorOrigin: {
