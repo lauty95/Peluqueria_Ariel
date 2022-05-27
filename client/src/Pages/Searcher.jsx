@@ -1,6 +1,9 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Table } from 'react-bootstrap'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actionCreators from '../actions'
 
 function Searcher(props) {
     const [data, setData] = useState([])
@@ -13,6 +16,7 @@ function Searcher(props) {
     const searching = (e) => {
         setBusqueda(e)
     }
+
     return (
         <div className='promotion mt-1'>
             <div className="botones">
@@ -40,10 +44,10 @@ function Searcher(props) {
                     {
                         busqueda.length >= 3 ?
                             data.map(item => {
-                                let nombre = item.nombre.toLowerCase()
+                                let nombre = item.nombre ? item.nombre.toLowerCase() : ''
                                 if (nombre.includes(busqueda.toLowerCase())) {
                                     return (
-                                        <tr key={item.id}>
+                                        <tr key={item.id} onClick={() => props.contactMe(item.telefono)}>
                                             <td>{item.nombre}</td>
                                             <td>{item.diaPromo}</td>
                                             <td>{item.dia}</td>
@@ -63,4 +67,8 @@ function Searcher(props) {
     )
 }
 
-export default Searcher
+const mapDispatchToProps = function (dispatch) {
+    return bindActionCreators(actionCreators, dispatch)
+}
+
+export default connect(null, mapDispatchToProps)(Searcher);
