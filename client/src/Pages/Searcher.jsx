@@ -8,9 +8,31 @@ import * as actionCreators from '../actions'
 function Searcher(props) {
     const [data, setData] = useState([])
     const [busqueda, setBusqueda] = useState('')
+
+    const transformarFecha = (date) => {
+        const dia = date.split("-")[0]
+        const mes = date.split("-")[1] - 1
+        let anio = date.split("-")[2]
+        if (anio < 2000) anio = "" + 20 + anio
+        return new Date(anio, mes, dia)
+    }
+
+    function compare(a, b) {
+        if (transformarFecha(a) > transformarFecha(b)) {
+            return -1;
+        }
+        if (transformarFecha(a) < transformarFecha(b)) {
+            return 1;
+        }
+        return 0;
+    }
+
     useEffect(() => {
         axios.get(`/allClients`)
-            .then(r => setData(r.data))
+            .then(r => {
+                let res = r.data.sort((a, b) => compare(a.dia, b.dia))
+                setData(res)
+            })
     }, [])
 
     const searching = (e) => {
