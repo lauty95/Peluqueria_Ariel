@@ -24,7 +24,7 @@ const Promotions = (props) => {
             .then(res => {
                 res.data.forEach(user => {
                     console.log(user)
-                    if (!arr.find((el) => el.nombre === user.nombre))
+                    if (!arr.find((el) => el.idCliente === user.idCliente))
                         arr.push({ id: user.id, nombre: user.nombre, diaPromo: user.diaPromo, telefono: user.telefono, value: true })
                 })
                 setUsuarios(arr)
