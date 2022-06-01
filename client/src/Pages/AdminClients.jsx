@@ -379,11 +379,11 @@ function AdminClients(props) {
 
                         <hr />
 
-                        <Button onClick={() => subsription()}>
+                        {/* <Button onClick={() => subsription()}>
                             Notificaciones
-                        </Button>
+                        </Button> 
 
-                        <hr />
+                        <hr />*/}
 
                         <p>Cantidad de clientes: {cantClientes}</p>
                     </Offcanvas.Body>
