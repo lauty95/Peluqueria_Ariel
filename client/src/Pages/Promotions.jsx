@@ -81,7 +81,7 @@ const Promotions = (props) => {
                     {usuarios && usuarios.map(user =>
                         props.compararFecha(user.dia, user.diaPromo) &&
                         <tr>
-                            <td>{user.nombre}</td>
+                            <td onClick={() => props.contactMe(user.telefono)}>{user.nombre}</td>
                             <td>{user.dia}</td>
                             <td>{user.diaPromo}</td>
                             <td>{
