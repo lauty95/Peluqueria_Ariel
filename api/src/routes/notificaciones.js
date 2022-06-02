@@ -57,8 +57,6 @@ router.post("/newClient", async (req, res) => {
         let horariosDeTurnos = []
         turnosLibres.forEach(el => horariosDeTurnos.push(el.turno))
         let respuestaTurnos = horarios.filter(el => !horariosDeTurnos.includes(el))
-        console.log(respuestaTurnos.includes(turno))
-        console.log(respuestaTurnos)
         if (respuestaTurnos.includes(turno)) {
             if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)) {
                 let calculoFecha = acomodarFecha(dia)
@@ -150,7 +148,6 @@ router.get('/promocion/:cantidadDias', async (req, res) => {
         const clientes = await Cliente.findAll({
             where: {
                 diaPromo,
-                tienePromo: true
             }
         })
         res.status(200).json(clientes)

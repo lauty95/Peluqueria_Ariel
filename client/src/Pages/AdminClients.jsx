@@ -301,7 +301,6 @@ function AdminClients(props) {
                                 .then(r => {
                                     r.data.forEach(horario => {
                                         axios.post(`/ocuparHorario/${fechaActual}/${horario}`)
-                                            .then(r => console.log(r.data.msg))
                                     })
                                 })
                                 .then(() => {

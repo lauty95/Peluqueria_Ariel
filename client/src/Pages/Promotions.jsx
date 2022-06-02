@@ -23,9 +23,8 @@ const Promotions = (props) => {
         axios.get(`/promocion/${cantidadDias}`)
             .then(res => {
                 res.data.forEach(user => {
-                    console.log(user)
                     if (!arr.find((el) => el.idCliente === user.idCliente))
-                        arr.push({ id: user.id, nombre: user.nombre, diaPromo: user.diaPromo, telefono: user.telefono, value: true })
+                        arr.push({ id: user.id, dia: user.dia, nombre: user.nombre, diaPromo: user.diaPromo, telefono: user.telefono, value: true })
                 })
                 setUsuarios(arr)
             })
@@ -80,6 +79,7 @@ const Promotions = (props) => {
                 </thead>
                 <tbody>
                     {usuarios && usuarios.map(user =>
+                        props.compararFecha(user.dia, user.diaPromo) &&
                         <tr>
                             <td>{user.nombre}</td>
                             <td>{user.dia}</td>
