@@ -78,21 +78,23 @@ const Promotions = (props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {usuarios && usuarios.map(user =>
+                    {usuarios && usuarios.map(user => {
                         props.compararFecha(user.dia, user.diaPromo) &&
-                        <tr>
-                            <td onClick={() => props.contactMe(user.telefono)}>{user.nombre}</td>
-                            <td>{user.dia}</td>
-                            <td>{user.diaPromo}</td>
-                            <td>{
-                                <img
-                                    name={user.telefono}
-                                    onClick={() => props.contactMe(user.telefono, mensaje(user.nombre, user.diaPromo))}
-                                    className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
-                                />
-                            }</td>
-                            {/* <td className='chk-promotion'><Checkbox checked={user.value} onChange={() => handleChange(user.id)} /></td> */}
-                        </tr>
+                            (!nombre.includes(busqueda.toLowerCase())) &&
+                            <tr>
+                                <td onClick={() => props.contactMe(user.telefono)}>{user.nombre}</td>
+                                <td>{user.dia}</td>
+                                <td>{user.diaPromo}</td>
+                                <td>{
+                                    <img
+                                        name={user.telefono}
+                                        onClick={() => props.contactMe(user.telefono, mensaje(user.nombre, user.diaPromo))}
+                                        className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
+                                    />
+                                }</td>
+                                {/* <td className='chk-promotion'><Checkbox checked={user.value} onChange={() => handleChange(user.id)} /></td> */}
+                            </tr>
+                    }
                     )}
                 </tbody>
             </Table>
