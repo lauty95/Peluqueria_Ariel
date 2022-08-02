@@ -95,7 +95,7 @@ router.post("/newClient", async (req, res) => {
                 secure: true,
                 auth: {
                     user: EMAIL_FROM,
-                    pass: EMAIL_PASSWORD
+                    pass: 'pwewewvxvktalyhw'
                 }
             })
 
