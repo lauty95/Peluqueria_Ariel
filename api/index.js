@@ -26,7 +26,7 @@ const PORT = process.env.PORT;
 // Syncing all the models at once.
 conn.sync({ force: false }).then(() => {
 
-  // axios.get('https://peluqueria-ariel.herokuapp.com/allClients')
+  // axios.get('https://peliqueria-ariel.herokuapp.com/allClients')
   //   .then(async item => {
   //     item.data.forEach(async d => {
   //       await Cliente.create({
@@ -41,8 +41,9 @@ conn.sync({ force: false }).then(() => {
   //       });
   //     })
   //   })
+  //   .then(() => console.log('complete'))
 
-  // axios.get('https://peluqueria-ariel.herokuapp.com/allUsers')
+  // axios.get('https://peliqueria-ariel.herokuapp.com/allUsers')
   //   .then(async item => {
   //     item.data.forEach(async d => {
   //       await Usuario.create({
@@ -52,6 +53,7 @@ conn.sync({ force: false }).then(() => {
   //       });
   //     })
   //   })
+  //   .then(() => console.log('complete 2'))
 
   server.listen(PORT, () => {
     console.log(`Listening at port ${PORT}`);

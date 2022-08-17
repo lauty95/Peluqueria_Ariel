@@ -40,6 +40,7 @@ function AdminClients(props) {
     const [mostrar, setMostrar] = useState(true)
     const [pickerStatus, setPickerStatus] = useState(false)
     const [showwsp, setshowwsp] = useState(false)
+    const [showPunish, setShowPunish] = useState(false)
     const [wsp, setWsp] = useState({})
     const [cantClientes, setCantClientes] = useState(0);
 
@@ -101,6 +102,17 @@ function AdminClients(props) {
 
     const deleteRegister = (id) => {
         axios.post(`/deleteClient/${id}`)
+            .then((r) => {
+                registroOk(r.data.msg)
+                setRender(!render)
+            })
+            .catch(() => {
+                registroOk('Hubo un error')
+            })
+    }
+
+    const punishRegister = (id) => {
+        axios.put(`/quitarPromo/${id}`)
             .then((r) => {
                 registroOk(r.data.msg)
                 setRender(!render)
@@ -226,12 +238,20 @@ function AdminClients(props) {
                                                                 className='imagenWsp' src={imgWsp} alt="boton de whatsapp"
                                                             />
                                                         }</td>
-                                                        <td>{<button name={user.id} onClick={(e) => {
-                                                            e.preventDefault()
-                                                            setSelectId(user.id)
-                                                            handleShow()
-                                                        }
-                                                        }>Eliminar</button>}</td>
+                                                        <td>
+                                                            {user.tienePromo && <button name={user.id} onClick={(e) => {
+                                                                e.preventDefault()
+                                                                setSelectId(user.id)
+                                                                setShowPunish(true)
+                                                            }
+                                                            }>Castigar</button>}
+                                                            <button name={user.id} onClick={(e) => {
+                                                                e.preventDefault()
+                                                                setSelectId(user.id)
+                                                                handleShow()
+                                                            }
+                                                            }>Eliminar</button>
+                                                        </td>
                                                     </tr>
                                                     :
                                                     <tr className="ocupado">
@@ -264,6 +284,23 @@ function AdminClients(props) {
                         <Button variant="danger" onClick={() => {
                             handleClose()
                             deleteRegister(selectId)
+                        }}>
+                            Si
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showPunish} onHide={() => setShowPunish(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Advertencia!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Está seguro que quieres castigar este cliente?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowPunish(false)}>
+                            No
+                        </Button>
+                        <Button variant="danger" onClick={() => {
+                            setShowPunish(false)
+                            punishRegister(selectId)
                         }}>
                             Si
                         </Button>

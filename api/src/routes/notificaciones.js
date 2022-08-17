@@ -156,6 +156,25 @@ router.get('/promocion/:cantidadDias', async (req, res) => {
     }
 })
 
+router.put('/quitarPromo/:id', async (req, res) => {
+    const { id } = req.params
+    let diaPromo = new Date()
+    diaPromo.setDate(diaPromo.getDate() - 30)
+    diaPromo = diaPromo.toLocaleString('es-AR', { dateStyle: 'short' })
+    diaPromo = agregarGuiones(diaPromo)
+    try {
+        const data = await Cliente.findOne({ where: { id } })
+        await Cliente.update({ ...data, diaPromo, tienePromo: false }, {
+            where: {
+                id: id
+            }
+        })
+        res.status(200).send({ msg: 'Promo quitada' })
+    } catch (e) {
+        res.status(404).send({ msg: 'Cliente no encontrado' })
+    }
+})
+
 // router.post('/enviarPromo', async (req, res) => {
 //     const clientes = req.body
 

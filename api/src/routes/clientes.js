@@ -1,7 +1,7 @@
 const { Cliente, Mensaje, Precio } = require('../db');
 const express = require('express');
 const router = express();
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 const uuid4 = require('uuid4')
 
 const horarios = [
