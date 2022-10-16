@@ -110,7 +110,7 @@ router.post("/newClient", async (req, res) => {
                 <hr />
                 <hr />
                 <a href="https://wa.me/549${telefono}?text=*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${diaCompleto} a las ${turno} Hs.
-                Recordá el *valor del corte es de *$700*, el *corte de promoción es de $300*, *barba $300* y *dibujos $100* Te espero ${nombre}.">
+                Recordá el *valor del corte es de $800*, el *corte de promoción es de $300*, *barba $300* y *dibujos $100* Te espero ${nombre}.">
                     <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" width="300px" heigth="300px"></img>
                 </a>
             `
