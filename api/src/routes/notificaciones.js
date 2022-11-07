@@ -58,8 +58,11 @@ router.post("/newClient", async (req, res) => {
         turnosLibres.forEach(el => horariosDeTurnos.push(el.turno))
         let respuestaTurnos = horarios.filter(el => !horariosDeTurnos.includes(el))
         if (respuestaTurnos.includes(turno)) {
-            if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)) {
-                let calculoFecha = acomodarFecha(dia)
+            if (cantidadRegistros.length === 0 ||
+                acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo) &&
+                acomodarFechaCon20(dia).getMonth() + 1 !== 12 &&
+                acomodarFechaCon20(dia).getMonth() + 1 !== 1) {
+                let calculoFecha = new Date(Math.min(acomodarFecha(dia), new Date(acomodarFecha(dia).getFullYear(), 10, 30)))
                 calculoFecha.setDate(calculoFecha.getDate() + 21)
                 diaPromo = devolverFecha(calculoFecha)
                 await Cliente.create(
