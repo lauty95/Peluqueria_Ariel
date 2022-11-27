@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express();
-const { Cliente, Push } = require('../db');
+const { Cliente } = require('../db');
 const uuid4 = require('uuid4');
-const nodemailer = require("nodemailer")
-const { EMAIL_PASSWORD, EMAIL_FROM, EMAIL_TO } = process.env;
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const { Op } = require('sequelize');
+const qrcode = require('qrcode-terminal');
 
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
@@ -12,6 +12,28 @@ const horarios = [
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
     '18:00', '18:30', '19:00', '19:30', '20:00'
 ]
+
+let client;
+
+client = new Client({
+    authStrategy: new LocalAuth()
+});
+
+client.on('qr', (qr) => {
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.on('message', message => {
+    if (message.body === '!ping') {
+        message.reply('pong');
+    }
+});
+
+client.initialize();
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
@@ -92,40 +114,15 @@ router.post("/newClient", async (req, res) => {
                 );
             }
 
-            const transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                post: 465,
-                secure: true,
-                auth: {
-                    user: EMAIL_FROM,
-                    pass: EMAIL_PASSWORD
-                }
-            })
-
-            const mailOptions = {
-                from: EMAIL_FROM,
-                to: EMAIL_TO,
-                subject: `Nuevo cliente | ${nombre}`,
-                html: `
-                <h1>Nuevo cliente</h1>
-                <hr />
-                <b>${nombre} ha sacado turno el día ${diaCompleto} a las ${turno}</b>
-                <hr />
-                <hr />
-                <a href="https://wa.me/549${telefono}?text=*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${diaCompleto} a las ${turno} Hs.
-                Recordá el *valor del corte es de $800*, el *corte de promoción es de $300*, *barba $300* y *dibujos $100* Te espero ${nombre}.">
-                    <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" width="300px" heigth="300px"></img>
-                </a>
-            `
+            try {
+                client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
+                    if (isRegistered) {
+                        client.sendMessage(`549${telefono}@c.us`, `*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${dia} a las ${turno} Hs. Te espero ${nombre}.`);
+                    }
+                })
+            } catch (e) {
+                console.log('wsp error connection')
             }
-
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log("Email enviado")
-                }
-            })
 
             res.status(200).send({ msg: 'created' })
         } else {
