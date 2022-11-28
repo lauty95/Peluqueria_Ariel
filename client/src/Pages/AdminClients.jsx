@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from '../actions'
 import Spinner from '../Components/Spinner';
+import QRCode from "react-qr-code";
 
 const useStyle = makeStyles({
     inputFecha: {
@@ -43,6 +44,7 @@ function AdminClients(props) {
     const [showPunish, setShowPunish] = useState(false)
     const [wsp, setWsp] = useState({})
     const [cantClientes, setCantClientes] = useState(0);
+    const [qrCode, setQrCode] = useState("");
 
     const handleCloseCanva = () => setShowCanva(false);
     const handleShowCanva = () => setShowCanva(true);
@@ -82,23 +84,9 @@ function AdminClients(props) {
             .then(r => setPrecio(r.data.precio))
         axios.get('/cantUsers')
             .then(r => setCantClientes(r.data))
+        axios.get('/qr')
+            .then(r => setQrCode(r.data))
     }, [render, fechaActual])
-
-    const subsription = async () => {
-
-        const register = await navigator.serviceWorker.register('/worker.js', {
-            scope: '/'
-        });
-
-        await navigator.serviceWorker.ready;
-
-        const subscription = await register.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: PUBLIC_KEY
-        })
-
-        await axios.post('/subscription', subscription)
-    }
 
     const deleteRegister = (id) => {
         axios.post(`/deleteClient/${id}`)
@@ -415,11 +403,18 @@ function AdminClients(props) {
 
                         <hr />
 
-                        {/* <Button onClick={() => subsription()}>
-                            Notificaciones
-                        </Button> 
+                        {
+                            qrCode === "" ?
+                                <p>Generando Código</p>
+                                :
+                                <QRCode
+                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                    value={qrCode}
+                                    viewBox={`0 0 256 256`}
+                                />
+                        }
 
-                        <hr />*/}
+                        <hr />
 
                         <p>Cantidad de clientes: {cantClientes}</p>
                     </Offcanvas.Body>
