@@ -8,6 +8,26 @@ const qrcode = require('qrcode-terminal');
 
 let client;
 
+client = new Client({
+    puppeteer: {
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ],
+        authStrategy: new LocalAuth()
+    }
+});
+
+client.on('qr', (qr) => {
+    console.log(qr)
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.initialize();
+
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
     '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
@@ -37,28 +57,6 @@ function devolverFecha(date) {
     const anio = date.getFullYear()
     return fecha + "-" + mes + "-" + anio
 }
-
-router.get('/qr', async (req, res) => {
-    client = new Client({
-        puppeteer: {
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox'
-            ],
-            authStrategy: new LocalAuth()
-        }
-    });
-
-    client.on('qr', (qr) => {
-        res.send(qr)
-    });
-
-    client.on('ready', () => {
-        console.log('Client is ready!');
-    });
-
-    client.initialize();
-})
 
 router.post("/newClient", async (req, res) => {
     var { dia, tienePromo, diaPromo } = req.body

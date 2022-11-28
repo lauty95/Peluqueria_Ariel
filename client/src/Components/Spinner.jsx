@@ -8,8 +8,6 @@ const Spinner = () => {
                     <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
-            <p>Esto puede demorar porque está alojado en un servidor gratuito</p>
-            <p>Si demora en conectarte recarga la página</p>
         </div>
     );
 };

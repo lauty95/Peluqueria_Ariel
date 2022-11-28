@@ -134,7 +134,7 @@ function FormReservas(props) {
               </>
               :
               <>
-                <form className={`formularioReservas ${!login && 'visible'}`} onSubmit={handleSubmit}>
+                <form className={`formularioReservas ${!login && 'visible'}`}>
                   <div className="filaFormulario">
                     <span>NOMBRE</span>
                     <input value={props.user.nombre} disabled={registrado} type="text" name="nombre" placeholder="Ingrese su nombre" onChange={handleChange} required />
@@ -185,7 +185,7 @@ function FormReservas(props) {
                     props.compararFecha(initialDate, props.user.diaPromo) &&
                     <MessagePromo diaActual={props.user.dia} diaPromo={props.user.diaPromo} compararFecha={props.compararFecha} precio={props.price} />
                   }
-                  <button disabled={registrado || sunday} className="boton" type="submit">Reservar</button>
+                  <button disabled={registrado || sunday} className="boton" type="submit" onClick={handleSubmit}>Reservar</button>
                 </form>
               </>}
           </div>
