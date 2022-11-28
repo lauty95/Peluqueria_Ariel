@@ -16,24 +16,15 @@ const horarios = [
 let client;
 
 client = new Client({
-    authStrategy: new LocalAuth()
-});
-
-client.on('qr', (qr) => {
-    qrcode.generate(qr, { small: true });
-});
-
-client.on('ready', () => {
-    console.log('Client is ready!');
-});
-
-client.on('message', message => {
-    if (message.body === '!ping') {
-        message.reply('pong');
+    puppeteer: {
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ],
+        authStrategy: new LocalAuth()
     }
 });
 
-client.initialize();
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
@@ -56,6 +47,17 @@ function devolverFecha(date) {
     const anio = date.getFullYear()
     return fecha + "-" + mes + "-" + anio
 }
+
+router.get('/qr', async (req, res) => {
+    client.on('qr', (qr) => {
+        res.send(qr)
+    });
+    client.on('ready', () => {
+        console.log('Client is ready!');
+    });
+
+    client.initialize();
+})
 
 router.post("/newClient", async (req, res) => {
     var { dia, tienePromo, diaPromo } = req.body
@@ -174,6 +176,8 @@ router.put('/quitarPromo/:id', async (req, res) => {
         res.status(404).send({ msg: 'Cliente no encontrado' })
     }
 })
+
+
 
 // router.post('/enviarPromo', async (req, res) => {
 //     const clientes = req.body
