@@ -2,31 +2,39 @@ const express = require('express');
 const router = express();
 const { Cliente } = require('../db');
 const uuid4 = require('uuid4');
+const nodemailer = require("nodemailer")
+const { EMAIL_PASSWORD, EMAIL_FROM, EMAIL_TO } = process.env;
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const { Op } = require('sequelize');
 const qrcode = require('qrcode-terminal');
 
-let client;
+/*let client;
 
 client = new Client({
-    puppeteer: {
+    /*puppeteer: {
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox'
         ],
         authStrategy: new LocalAuth()
     }
-});
+    puppeteer: { headless: true, args: [ '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--single-process', '--disable-gpu', ], },
+})
+    */
 
-client.on('qr', (qr) => {
-    console.log(qr)
-});
-
-client.on('ready', () => {
-    console.log('Client is ready!');
-});
-
-client.initialize();
+router.get('/qr', async (req, res) => {
+    /*	client.on('qr', (qr) => {
+            //qrcode.generate(qr, {small: true});
+            res.send(qr)
+        });		
+    
+        client.on('ready', () => {
+                console.log('Client is ready!');
+        });
+    
+        client.initialize();*/
+    res.send("qr")
+})
 
 const horarios = [
     '9:00', '9:30', '10:00', '10:30', '11:00', '11:30',
@@ -86,7 +94,9 @@ router.post("/newClient", async (req, res) => {
                 acomodarFechaCon20(dia).getMonth() + 1 !== 12 &&
                 acomodarFechaCon20(dia).getMonth() + 1 !== 1) {
                 let calculoFecha = new Date(Math.min(acomodarFecha(dia), new Date(acomodarFecha(dia).getFullYear(), 10, 30)))
-                calculoFecha.setDate(calculoFecha.getDate() + 21)
+                // let diasASumar = Math.min(Math.abs(calculoFecha - new Date(acomodarFecha(dia).getFullYear(), 10, 30)) / (1000 * 60 * 60 * 24), 21)
+                let diasASumar = 0;
+                calculoFecha.setDate(calculoFecha.getDate() + diasASumar)
                 diaPromo = devolverFecha(calculoFecha)
                 await Cliente.create(
                     {
@@ -115,15 +125,41 @@ router.post("/newClient", async (req, res) => {
                 );
             }
 
-            try {
-                client.isRegisteredUser(`549${telefono}@c.us`).then(function (isRegistered) {
-                    if (isRegistered) {
-                        client.sendMessage(`549${telefono}@c.us`, `*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${dia} a las ${turno} Hs. Te espero ${nombre}.`);
-                    }
-                })
-            } catch (e) {
-                console.log('wsp error connection')
+
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                post: 465,
+                secure: true,
+                auth: {
+                    user: EMAIL_FROM,
+                    pass: EMAIL_PASSWORD
+                }
+            })
+
+            const mailOptions = {
+                from: EMAIL_FROM,
+                to: EMAIL_TO,
+                subject: `Nuevo cliente | ${nombre}`,
+                html: `
+                <h1>Nuevo cliente</h1>
+                <hr />
+                <b>${nombre} ha sacado turno el día ${diaCompleto} a las ${turno}</b>
+                <hr />
+                <hr />
+                <a href="https://wa.me/549${telefono}?text=*ARIEL LUQUE PELUQUERIA DE CABALLEROS* Agradece tu reserva el día ${diaCompleto} a las ${turno} Hs.
+                Recordá el *valor del corte es de $1000*, el *corte de promoción es de $400*, *barba $400* y *dibujos-lineas $200* Te espero ${nombre}.">
+                    <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c543.png" width="300px" heigth="300px"></img>
+                </a>
+            `
             }
+
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log("Email enviado")
+                }
+            })
 
             res.status(200).send({ msg: 'created' })
         } else {
@@ -155,6 +191,38 @@ router.get('/promocion/:cantidadDias', async (req, res) => {
     } catch (err) {
         res.status(500).json(err)
     }
+})
+
+router.get('/reviewPromo', async (_, res) => {
+    const response = [];
+    const buscar = async () => {
+        // let diaPromo = new Date()
+        // diaPromo.setDate(diaPromo.getDate() + Number(cantidadDias))
+        // diaPromo = diaPromo.toLocaleString('es-AR', { dateStyle: 'short' })
+        // diaPromo = agregarGuiones(diaPromo)
+        // console.log(diaPromo)
+        try {
+            const clientes = await Cliente.update({ tienePromo: true }, {
+                where: {
+                    diaPromo: "22-02-2023",
+                }
+            })
+            // const clientes = await Cliente.findAll({
+            //     where: {
+            //         diaPromo: "24-02-2023",
+            //     }
+            // })
+            return clientes
+        } catch (err) {
+            // res.status(500).json(err)
+            return [];
+        }
+    }
+    // for (let i = 0; i < 20; i++) {
+    const s = await buscar()
+    response.push(s)
+    // }
+    res.status(200).json(response);
 })
 
 router.put('/quitarPromo/:id', async (req, res) => {

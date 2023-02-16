@@ -1,6 +1,7 @@
 const { Cliente, Usuario } = require('../db');
 const express = require('express');
 const router = express();
+const { Op } = require('sequelize');
 
 function acomodarFecha(date) {
     let dia = date.split('-')[0]
@@ -101,6 +102,45 @@ router.put('/updateUser', async (req, res) => {
         res.status(200).json({ msg: 'user edited' })
     } catch (err) {
         res.status(500).json(err)
+    }
+})
+
+router.get('/actualizarPromos', async (req, res) => {
+	console.log("ActualizarPromos");
+    try {
+        registros = await Cliente.update({ diaPromo: '30-11-2022' },
+            {
+                where: {
+                    [Op.or]: [
+                        { diaPromo: "1-12-2022" },
+                        { diaPromo: "2-12-2022" },
+                        { diaPromo: "3-12-2022" },
+                        { diaPromo: "4-12-2022" },
+                        { diaPromo: "5-12-2022" },
+                        { diaPromo: "6-12-2022" },
+                        { diaPromo: "7-12-2022" },
+                        { diaPromo: "8-12-2022" },
+                        { diaPromo: "9-12-2022" },
+                        { diaPromo: "10-12-2022" },
+                        { diaPromo: "11-12-2022" },
+                        { diaPromo: "12-12-2022" },
+                        { diaPromo: "13-12-2022" },
+                        { diaPromo: "14-12-2022" },
+                        { diaPromo: "15-12-2022" },
+                        { diaPromo: "16-12-2022" },
+                        { diaPromo: "17-12-2022" },
+                        { diaPromo: "18-12-2022" },
+                        { diaPromo: "19-12-2022" },
+                        { diaPromo: "20-12-2022" },
+                        { diaPromo: "21-12-2022" },
+                        { diaPromo: "22-12-2022" },
+                    ]
+                }
+            })
+        res.status(200).json(registros)
+    } catch (err) {
+	console.log(err);
+        res.status(500).send(err)
     }
 })
 

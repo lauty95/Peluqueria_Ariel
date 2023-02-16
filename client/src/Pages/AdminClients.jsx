@@ -401,7 +401,7 @@ function AdminClients(props) {
                             Estadisticas
                         </Button>
 
-                        {/* <hr />
+                        <hr />
 
                         {
                             qrCode === "" ?
@@ -412,7 +412,7 @@ function AdminClients(props) {
                                     value={qrCode}
                                     viewBox={`0 0 256 256`}
                                 />
-                        } */}
+                        }
 
                         <hr />
 
