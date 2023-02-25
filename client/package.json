@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts --openssl-legacy-provider build && cd build/ && yes | cp -r ./ /var/www/html",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

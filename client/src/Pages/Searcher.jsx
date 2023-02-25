@@ -27,6 +27,15 @@ function Searcher(props) {
         return 0;
     }
 
+    const handleChange = (e, ix) => {
+        setData(prev => ([...prev, prev[ix - 1][e.target.name] = e.target.value]))
+    }
+    console.log(data)
+
+    const handleUpdate = (id) => {
+        axios.put('/updateClient', data)
+    }
+
     useEffect(() => {
         axios.get(`/allClients`)
             .then(r => {
@@ -60,21 +69,58 @@ function Searcher(props) {
                         <th>Dia Turno</th>
                         <th>Turno</th>
                         <th>DNI</th>
+                        <th>Tiene Promo</th>
+                        <th>Actualizar</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         busqueda.length >= 3 ?
-                            data.map(item => {
+                            data.map((item, ix) => {
                                 let nombre = item.nombre ? item.nombre.toLowerCase() : ''
                                 if (nombre.includes(busqueda.toLowerCase())) {
                                     return (
                                         <tr key={item.id} onClick={() => props.contactMe(item.telefono)}>
-                                            <td>{item.nombre}</td>
-                                            <td>{item.diaPromo}</td>
-                                            <td>{item.dia}</td>
-                                            <td>{item.turno}</td>
-                                            <td>{item.idCliente}</td>
+                                            {console.log(item)}
+                                            <input
+                                                name={'nombre'}
+                                                onChange={(e) => handleChange(e, ix)}
+                                            >
+                                                {item.nombre}
+                                            </input>
+                                            <input
+                                                name={'diaPromo'}
+                                                onChange={(e) => handleChange(e, ix)}
+                                            >
+                                                {item.diaPromo}
+                                            </input>
+                                            <input
+                                                name={'dia'}
+                                                onChange={(e) => handleChange(e, ix)}
+                                            >
+                                                {item.dia}
+                                            </input>
+                                            <input
+                                                name={'turno'}
+                                                onChange={(e) => handleChange(e, ix)}
+                                            >
+                                                {item.turno}
+                                            </input>
+                                            <input
+                                                name={'idCliente'}
+                                                onChange={(e) => handleChange(e, ix)}
+                                            >
+                                                {item.idCliente}
+                                            </input>
+                                            <input
+                                                name={'tienePromo'}
+                                                onChange={(e) => handleChange(e, ix)}
+                                            >
+                                                {item.tienePromo ? 'Si' : 'No'}
+                                            </input>
+                                            <Button onClick={() => handleUpdate(item.id)}>
+                                                Actualizar
+                                            </Button>
                                         </tr>
                                     )
                                 }

@@ -89,14 +89,9 @@ router.post("/newClient", async (req, res) => {
         turnosLibres.forEach(el => horariosDeTurnos.push(el.turno))
         let respuestaTurnos = horarios.filter(el => !horariosDeTurnos.includes(el))
         if (respuestaTurnos.includes(turno)) {
-            if (cantidadRegistros.length === 0 ||
-                acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo) &&
-                acomodarFechaCon20(dia).getMonth() + 1 !== 12 &&
-                acomodarFechaCon20(dia).getMonth() + 1 !== 1) {
-                let calculoFecha = new Date(Math.min(acomodarFecha(dia), new Date(acomodarFecha(dia).getFullYear(), 10, 30)))
-                // let diasASumar = Math.min(Math.abs(calculoFecha - new Date(acomodarFecha(dia).getFullYear(), 10, 30)) / (1000 * 60 * 60 * 24), 21)
-                let diasASumar = 0;
-                calculoFecha.setDate(calculoFecha.getDate() + diasASumar)
+            if (cantidadRegistros.length === 0 || acomodarFechaCon20(dia) > acomodarFechaCon20(diaPromo)) {
+                let calculoFecha = acomodarFecha(dia)
+                calculoFecha.setDate(calculoFecha.getDate() + 21)
                 diaPromo = devolverFecha(calculoFecha)
                 await Cliente.create(
                     {
@@ -202,9 +197,9 @@ router.get('/reviewPromo', async (_, res) => {
         // diaPromo = agregarGuiones(diaPromo)
         // console.log(diaPromo)
         try {
-            const clientes = await Cliente.update({ tienePromo: true }, {
+            const clientes = await Cliente.update({ diaPromo: "24-2-2023" }, {
                 where: {
-                    diaPromo: "22-02-2023",
+                    diaPromo: "24-02-2023",
                 }
             })
             // const clientes = await Cliente.findAll({
